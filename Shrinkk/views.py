@@ -1,30 +1,12 @@
 from django.shortcuts import render,redirect
-import pyrebase,time
-from datetime import date
-import pprint
-# Create your views here.
-firebaseConfig = {
-  "apiKey": "AIzaSyALwZRcFKUMe2gOP_nnuNcQtFKnlSlLydM",
-  "authDomain": "shrinkk-847a2.firebaseapp.com",
-  "projectId": "shrinkk-847a2",
-  "storageBucket": "shrinkk-847a2.appspot.com",
-  "messagingSenderId": "310331286275",
-  "databaseURL":"https://shrinkk-847a2-default-rtdb.asia-southeast1.firebasedatabase.app",
-  "appId": "1:310331286275:web:f0c75eb98496de81147f36",
-  "measurementId": "G-H8YPKLDE7V"
-}
 
-firebase = pyrebase.initialize_app(firebaseConfig)
-db = firebase.database()
+import time
+from datetime import date
+# Create your views here.
 
 def homePage(request):
     data={'message':request.GET.get('status')}
-    subscribers = db.child("websiteInfo").child('subscribers').get()
-    if subscribers.val() == None :
-        subscribers = 0
-    else:
-        subscribers = len(subscribers.val())
-
+    subscribers = 5
     data["subscribers"] = subscribers
     return render(request, 'homePage.html',data)
 
@@ -49,7 +31,6 @@ def subscribePage(request):
         return redirect('/?status=' + status)
 
 
-
 def loginPage(request):
     if request.method == 'POST':
         email=request.POST.get('email')
@@ -60,3 +41,30 @@ def loginPage(request):
         return render(request,'loginPage.html',data) 
     
     return redirect("/")
+
+
+def signupPage(request):
+    data={"message":None}
+    if request.method == 'POST':
+        username=request.POST.get('username')
+        email=request.POST.get('email')
+        password=request.POST.get('password')
+        confirmpassword=request.POST.get('confirmpassword')
+        if password == confirmpassword:
+            try:
+                # Create a new user with email and password
+                auth.create_user_with_email_and_password(email, password)
+                data['message'] = "Account Created Successfully..!"
+                return render(request, 'signupPage.html', data)
+            
+            except requests.exceptions.HTTPError as error:
+                response = error.response.json()
+                error_message = response.get('error', {}).get('message')
+                if error_message == "EMAIL_EXISTS":
+                    data['message'] = "Email already exists. Please use a different email."
+                else:
+                    data['message'] = "An error occurred while creating the account."
+        else:
+            data['message'] = "Passwords do not match."
+        
+    return render(request,'signupPage.html',data)

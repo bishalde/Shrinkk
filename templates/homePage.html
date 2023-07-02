@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -157,27 +158,6 @@
           </section>
     </section>
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-    <script>
-      let loginbtn=document.getElementById("loginbtn");
-
-      var element = document.getElementById("loginBox");
-      loginbtn.addEventListener('click',()=>{
-        window.scrollTo(0,700);
-        element.classList.toggle("activebox");
-      });
-
-
-      let dismissbtn=document.getElementById("dismiss");
-      dismissbtn.addEventListener('click',()=>{
-        element.classList.remove("activebox");
-      });
-
-      let notifdismissbtn=document.getElementById("notifdismiss");
-      notifdismissbtn.addEventListener('click',()=>{
-        msgbox=document.getElementById("message");
-        msgbox.classList.toggle("notactivebox");
-      });
-
-    </script>
+    <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>

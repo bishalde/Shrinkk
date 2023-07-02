@@ -28,7 +28,7 @@ html{
     position: absolute;
     top:100px;
     right: 30px;
-    width: 700px;
+    width: fit-content;
 
     display: flex;
     justify-content: space-between;
@@ -44,6 +44,7 @@ html{
 .message svg{
     height: 30px;
     width: 30px;
+    margin-left: 50px;
     cursor: pointer;
 }
 .main{
@@ -562,6 +563,55 @@ footer .sociallinks svg:hover{
 											  rgba(255, 255, 255, .2) 75%,
 											  transparent 75%,
 											  transparent)
+}
+
+
+.signupbox h1{
+    font-family: var(--limelightFont);text-align: center;
+    font-size: 2.5rem;
+}
+.signupbox form label{
+    font-size: 1.5rem;
+    font-family: var(--nunitoFont);
+    color: var(--textFontColor);
+}
+
+.signupbox{
+    position: relative;
+    height: 100vh;
+    background-color: #ffffff;
+    margin:5rem;
+    border-radius: 20px;
+    padding:100px 150px;
+}
+
+.signupbox form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.signupbox form input{
+    outline: 0;
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
+    border: 2px solid black;
+    background-color: var(--bgColor);
+    padding: 15px;
+    font-size: 1rem;
+}
+
+.signupbox form input[type='submit']{
+    outline: 0;
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
+    border: 0px;
+    background-color: #000000;
+    color: #ffffff;
+    font-size: 1rem;
+    font-family: var(--margarineFont);
+    cursor: pointer;
 }
 
 
