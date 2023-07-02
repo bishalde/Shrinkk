@@ -1,6 +1,592 @@
+@import url('https://fonts.googleapis.com/css2?family=Limelight:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Margarine:wght@400;500;600;700;800&display=swap');
+
+:root{
+    --bgColor:#ffc300;
+    --color2:#E6A400;
+    --mainFontColor: #000000;
+    --textFontColor: #525252;
+    --limelightFont: 'Limelight', cursive;
+    --nunitoFont: 'Silkscreen', sans-serif;
+    --poppiFont: 'Poppins', sans-serif;
+    --margarineFont: 'Margarine', cursive;
+}
+
+html{
+    font-size: 20px;
+}
+
+.main{
+    padding: 0px 30px;
+}
+
 *{
-    background-color: black;
-    color: white;
-    margin:0;
-    padding:0;
+    margin: 0;
+    padding: 0;
+    outline: 0px;
+    box-sizing: border-box;
+    list-style: none; text-decoration: none;
+}
+
+.main{
+    position: relative;
+    width: 100%;
+    background-color: var(--bgColor);
+}
+
+.intro-data{
+    position: relative;
+    top:20px;
+    display: flex; 
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: inherit;
+}
+.intro-data h2, .intro-data h4{
+    user-select: none;
+    font-family: var(--nunitoFont);
+    color: #504444;
+}
+
+.intro-data h2 svg{
+    position: relative;
+    top: 10px;
+    width:40px;
+    height:40px;
+}
+
+.homebox{
+    position: relative;
+    top:16px;
+    width: 100%; min-height: 83vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+}
+
+
+.homebox h1{
+    font-size: 10rem;
+    font-family: var(--limelightFont);
+
+}
+.homebox h3{
+    font-size: 2.5rem;
+    line-height: 50px;
+    text-align: center;
+    font-family: var(--nunitoFont);
+    color: var(--textFontColor);
+}
+
+
+.scrollintro{
+    position: relative;
+    top: 50px;
+}
+
+.scrollintro .intro{
+    position: relative;
+    display: flex; flex-direction: row;
+    align-items: center; justify-content: space-evenly;
+    gap: 100px;
+}
+
+.scrollintro .intro h3{
+    padding: 20px;
+    color: #000000;
+    font-family: var(--poppiFont);
+    font-size: 2rem;
+}
+
+.centerbox{
+    width: 100%;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    position: sticky;
+    top:10px;
+    z-index: 100;
+}
+
+nav{
+    width: 95%; 
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+    display: flex ;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+}
+
+nav .logo{
+    font-size: 1.2rem;
+    background-color: #ffffff;
+    font-family: var(--limelightFont);
+}
+
+nav .navlinks{
+    display: flex; flex-direction: row;
+    background-color: #ffffff;
+    align-items: center;
+    gap: 30px;
+}
+nav .navlinks a{
+    color: var(--textFontColor);
+    font-family: var(--poppiFont);
+    background-color: #ffffff;
+    font-size: 1rem;
+}
+
+nav button{
+    font-family: var(--nunitoFont);
+    font-size: .8rem;
+    background-color: var(--color2);
+    padding: 10px 20px;
+    border-radius: 10px;
+    outline: none;
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+
+.shorten{
+    position: relative;
+    padding: 50px;
+    margin-top:60px;
+    width: 100%; 
+}
+
+.shorten h1{
+    font-size: 3rem;
+    font-family: var(--limelightFont);
+}
+
+.shorten h2{
+    font-size: 2.1rem;
+    font-family: var(--nunitoFont);
+}
+.shorten h4{
+    font-size: 1.5rem;
+    font-family: var(--poppiFont);
+    color: #504444;
+
+}
+
+.shortner-box{
+    margin-top: 30px;
+    padding: 40px;
+    width: 100%; 
+    background-color: var(--color2);
+    border-radius: 10px;
+    border: 0;
+    box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+
+}
+.shortner-box h3{
+    font-family: var(--nunitoFont);
+    font-size: 2rem;
+}
+
+.shortner-box form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.shortner-box form label{
+    font-family: var(--limelightFont);
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.shortner-box form input[type="url"],input[type="text"]{
+    padding: 10px;
+    border: 2px solid black;
+    border-radius: 10px;
+    font-family: var(--poppiFont);
+    font-size: 1rem;
+}
+
+.shortner-box form input[type="submit"]{
+    width: 15rem;
+    font-size: 1.2rem;
+    background-color: #000000;
+    border: 0px;
+    border-radius: 20px;
+    color: #ffffff;
+    padding: 15px;
+}
+
+.shortner-box form input[type="submit"]:hover{
+    background-color: #504444;
+    cursor: pointer;
+}
+form .inputbox{
+    width: 100%;
+}
+
+.forminfo{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--bgColor);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.forminfo p{
+    font-family: var(--nunitoFont);
+    color: #504444;
+}
+
+
+.stats{
+    width: 100%;
+    margin-top:50px;
+    padding-top: 100px;
+}
+
+.stats h1{
+    font-size: 4rem;
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.statsbox{
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 10px;
+
+}
+
+
+.statsbox .statdata{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 300px;
+    height: 150px;
+    background-color: var(--color2);
+    border-radius: 30px;
+}
+
+.statsbox .statdata:hover{
+    transition: .5 ease-in-out;
+    scale: 1.1;
+}
+
+.statsbox .statdata h1{
+    font-size: 2rem;
+    font-family: var(--nunitoFont);
+}
+.statsbox .statdata h5{
+    font-family: var(--margarineFont);
+    margin-top: -60px;    
+    font-size: 1.5rem;
+    color: #504444;
+}
+
+.faq{
+    width: 100%;
+    margin-top:50px;
+    padding-top: 100px;
+}
+
+.faq h1{
+    font-size: 4rem;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.faqquestions{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.faqquestions .question{
+    width: 100%;
+    background-color: var(--color2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: hidden;
+    border-radius: 10px;
+    max-height: 70px;
+}
+
+.faqquestions .question:hover{
+    transition: all .2s ease-in-out;
+    min-height: 180px;
+}
+
+.faqquestions .question h1{
+    position: relative;
+    top:15px;
+    font-family: var(--nunitoFont);
+    font-size: 1.5rem;
+    color: #504444;
+}
+
+.faqquestions .question h5{
+    position: relative;
+    text-align: center;
+    min-width: 100%;
+    overflow-x: hidden;
+    top:25px;
+    font-family: var(--poppiFont);
+    font-size: 1rem;
+}
+
+.stayupdated{
+    margin-top: 50px;
+    padding: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.stayupdated h1{
+    font-size: 4rem;
+    text-align: center;
+}
+
+.stayupdated h4{
+    font-size: 2rem;
+    line-height: 40px;
+    text-align: center;
+}
+.stayupdated form{
+    margin-top: 30px;
+}
+.stayupdated form input[type='email']{
+    width:400px;
+    background-color: var(--color2);
+    padding: 15px;
+    font-size: 1rem;
+    border: 0;
+    border-radius: 10px;
+}
+
+.stayupdated form input[type='submit']{
+    margin-left: 20px;
+    background-color: #000000;
+    color: #ffffff;
+    font-family: var(--nunitoFont);
+    padding: 15px 20px;
+    font-size: 1rem;
+    border: 0;
+    border-radius: 10px;
+}
+
+
+footer{
+    margin-top: 50px;
+    padding: 30px 10px;
+    border-top: 2px solid black;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-family: var(--limelightFont);
+}
+
+footer .sociallinks a{
+    margin-left: 10px;
+}
+
+footer .sociallinks svg:hover{
+    transition: all .2s ease-in-out;
+    scale: 1.5;
+}
+
+
+
+
+::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar
+{
+	width: 10px;
+	background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+	background-color: #F90;	
+	background-image: -webkit-linear-gradient(45deg,
+	                                          rgba(255, 255, 255, .2) 25%,
+											  transparent 25%,
+											  transparent 50%,
+											  rgba(255, 255, 255, .2) 50%,
+											  rgba(255, 255, 255, .2) 75%,
+											  transparent 75%,
+											  transparent)
+}
+
+
+
+
+@media screen and (max-width: 1023px){
+    html{
+        font-size: 15px;
+    }
+    .main{
+    padding: 0px 10px;
+    }
+    .intro-data{
+        padding: 0 35px;
+    }
+    .intro-data h2 svg{
+        position: relative;
+        top: 5px;
+        width:25px;
+        height:25px;
+    }
+    nav{
+        padding: 15px 20px;
+    }
+    nav .navlinks{
+        gap: 20px;
+    }
+    .stayupdated form input[type='email']{
+        width:300px;
+
+    }
+    .stayupdated form input[type='submit']{
+        margin-left: 10px;
+        padding: 15px 15px;
+    }
+
+}
+
+
+@media screen and (max-width: 768px){
+    html{
+        font-size: 13px;
+    }
+
+    .main{
+        padding: 0px 5px;
+    }
+    .intro-data{
+        padding: 0 5px;
+    }
+    .intro-data h2 svg{
+        position: relative;
+        top: 4px;
+        width:22px;
+        height:22px;
+    }
+    nav{
+        padding: 15px 15px;
+    }
+    nav .navlinks{
+        gap: 15px;
+    }
+    nav button{
+        padding: 5px 10px;
+    }
+    .faqquestions .question h1{
+        font-size: 1.9rem;
+        margin-bottom: 20px;
+    }
+    .stayupdated form input[type='email']{
+        width:200px;
+
+    }
+    .stayupdated form input[type='submit']{
+        font-size: .9rem;
+        margin-left: 5px;
+        padding: 10px 10px;
+    }
+    .stayupdated h4{
+        line-height: 30px;
+    }
+
+}
+
+
+
+@media screen and (max-width: 600px){
+    html{
+        font-size: 8px;
+    }
+
+    .intro-data h2 svg{
+        position: relative;
+        top: 5px;
+        width:15px;
+        height:15px;
+    }
+
+    .homebox h1{
+        font-size: 8rem;
+    }
+
+    .homebox h3{
+        line-height: 25px;
+    }
+
+    .scrollintro .intro{
+        gap: 40px;
+    }
+
+    .scrollintro .intro h3{
+        padding: 20px;
+        font-size: 3rem;
+    }
+    nav{
+        padding: 15px 10px;
+    }
+    nav .navlinks{
+        gap: 5px;
+    }
+    .shorten{
+        padding: 20px;
+    }
+    .statsbox .statdata{
+    width: 250px;
+    height: 100px;
+    }
+    footer{
+        margin-top: 20px;
+        padding: 15px 10px;
+    }
+    
+    footer .sociallinks a{
+        margin-left: 5px;
+    }
+    footer .sociallinks svg{
+        width: 20px;
+        height: 20px;
+    }
+    .stayupdated form input[type='email']{
+        width:250px;
+    }
+    .stayupdated form input[type='submit']{
+        margin-left: 0;
+        margin-top: 10px;
+        width:250px;
+    }
+    .stayupdated h4{
+        line-height: 20px;
+    }
+    
 }
