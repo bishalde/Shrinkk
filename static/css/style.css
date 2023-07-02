@@ -514,6 +514,7 @@ form .inputbox{
     font-size: 1rem;
     border: 0;
     border-radius: 10px;
+    cursor: pointer;
 }
 
 

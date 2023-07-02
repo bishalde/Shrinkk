@@ -8,9 +8,11 @@
 </head>
 <body>
     <h1>Email</h1>
-    <h3>{{ email }}</h3>
+    <h3>{{ request.session.email }}</h3>
     <br>
     <h1>Password</h1>
     <h3>{{ password }}</h3>
+    <h1>Username</h1>
+    <h3>{{ request.session.username }}</h3>
 </body>
 </html>

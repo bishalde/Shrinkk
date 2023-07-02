@@ -1,12 +1,14 @@
 from django.shortcuts import render,redirect
-
 import time
 from datetime import date
+from service.models import userInformation,subscriberInformation
 # Create your views here.
 
 def homePage(request):
     data={'message':request.GET.get('status')}
-    subscribers = 5
+    subscribers = subscriberInformation.objects.filter().count()
+    users = userInformation.objects.filter().count()
+    data['users']=users
     data["subscribers"] = subscribers
     return render(request, 'homePage.html',data)
 
@@ -14,19 +16,11 @@ def homePage(request):
 def subscribePage(request):
     if request.method == 'POST':
         email = request.POST.get('email')
-        subscribers = db.child('websiteInfo').child('subscribers').get().val()
-        if subscribers:
-            for key, data in subscribers.items():
-                if 'email' in data and data['email'] == email:
-                        status='Already Subscribed.!'
-                        return redirect('/?status=' + status)
-        
-        time_string = time.strftime("%m/%d/%Y, %H:%M:%S", time.localtime())
-        data = {
-                    'email': email,
-                    'dateTime': str(time_string),
-                }
-        db.child('websiteInfo').child('subscribers').push(data)
+        if subscriberInformation.objects.filter(email=email).exists():
+            status='Email Already Exists.!'
+        else:
+            subscriberInformation.objects.create(email=email)
+
         status='ThakYou For Subscribing.!'
         return redirect('/?status=' + status)
 
@@ -35,10 +29,17 @@ def loginPage(request):
     if request.method == 'POST':
         email=request.POST.get('email')
         password=request.POST.get('password')
-        data={'email':email,
-              'password':password
-              }
-        return render(request,'loginPage.html',data) 
+
+        if userInformation.objects.filter(email=email,password=password).exists():
+            username = userInformation.objects.get(email=email,password=password).username
+            request.session['email'] = email
+            request.session['username'] = username
+            request.session.set_expiry(3600)
+
+            return redirect("/") 
+        else:
+            status='Invalid Credentials.!'
+            return redirect('/?status=' + status)
     
     return redirect("/")
 
@@ -51,20 +52,21 @@ def signupPage(request):
         password=request.POST.get('password')
         confirmpassword=request.POST.get('confirmpassword')
         if password == confirmpassword:
-            try:
-                # Create a new user with email and password
-                auth.create_user_with_email_and_password(email, password)
-                data['message'] = "Account Created Successfully..!"
-                return render(request, 'signupPage.html', data)
-            
-            except requests.exceptions.HTTPError as error:
-                response = error.response.json()
-                error_message = response.get('error', {}).get('message')
-                if error_message == "EMAIL_EXISTS":
-                    data['message'] = "Email already exists. Please use a different email."
-                else:
-                    data['message'] = "An error occurred while creating the account."
+            if userInformation.objects.filter(email=email).exists():
+                data['message'] = "Email already exists."
+            elif userInformation.objects.filter(username=username).exists():
+                data['message'] = "Username already exists."
+            else:
+                userInformation.objects.create(username=username,email=email,password=password)
+                data['message'] = "User created successfully.!"
+                status='User created successfully..!'
+                return redirect('/?status=' + status)
         else:
             data['message'] = "Passwords do not match."
         
     return render(request,'signupPage.html',data)
+
+
+def logoutPage(request):
+    request.session.flush()
+    return redirect("/")

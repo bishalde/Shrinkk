@@ -3,10 +3,10 @@
     <svg id="dismiss" class="dismiss" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="fill: rgb(255, 255, 255);"><path d="m16.192 6.344-4.243 4.242-4.242-4.242-1.414 1.414L10.535 12l-4.242 4.242 1.414 1.414 4.242-4.242 4.243 4.242 1.414-1.414L13.364 12l4.242-4.242z"></path></svg>
     <form action="{% url 'loginPage' %}" method="POST">
         {% csrf_token %}
-        <label for="Email">Username</label>
-        <input type="email" name="email" id="email" placeholder="Enter Email" required minlength="6">
+        <label for="Email">Email</label>
+        <input type="email" name="email" id="email" placeholder="Enter Email" required >
         <label for="password">Password</label>
-        <input type="password" name="password" id="password" placeholder="Enter Password" required minlength="6">
+        <input type="password" name="password" id="password" placeholder="Enter Password">
         <input type="submit">
         <a href="{% url 'signupPage' %}"><input type="button" value="SignUp" ></a>
     </form>

@@ -9,7 +9,7 @@
       </div>
 
       {% if request.session.username %}
-      <button style="background-color: red;color:white;">SignOut</button>
+      <a href="{% url 'logoutPage' %}"><button style="background-color: red;color:white;">SignOut</button></a>
       {% else %}
       <button id="loginbtn">Login</button>
       {% endif %}
