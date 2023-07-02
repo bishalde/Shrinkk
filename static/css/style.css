@@ -18,6 +18,25 @@ html{
     font-size: 20px;
 }
 
+.message{
+    z-index: 1001;
+    background-color: red;
+    color: wheat;
+    padding: 10px 20px;
+    border: 0;
+    border-radius: 10px;
+    position: absolute;
+    top:100px;
+    right: 30px;
+    min-width: fit-content;
+}
+
+.message h1{
+    text-align: center;
+    font-size: .7rem;
+    font-family: var(--nunitoFont);
+}
+
 .main{
     padding: 0px 30px;
 }
@@ -28,6 +47,7 @@ html{
     outline: 0px;
     box-sizing: border-box;
     list-style: none; text-decoration: none;
+    user-select: none;
 }
 
 .main{
@@ -69,6 +89,7 @@ html{
 .homebox h1{
     font-size: 10rem;
     font-family: var(--limelightFont);
+    color: #000000;
 
 }
 .homebox h3{
@@ -126,7 +147,9 @@ nav .logo{
     background-color: #ffffff;
     font-family: var(--limelightFont);
 }
-
+nav a .logo{
+    color: #000000;
+}
 nav .navlinks{
     display: flex; flex-direction: row;
     background-color: #ffffff;

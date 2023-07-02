@@ -24,6 +24,7 @@ from Shrinkk import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.homePage, name='homePage'),
+    path('subscribe/', views.subscribePage, name='subscribePage'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += staticfiles_urlpatterns()
