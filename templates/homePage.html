@@ -9,8 +9,9 @@
 </head>
 <body>
   {% if message != None %}
-  <div class="message">
+  <div id="message" class="message">
     <h1>{{ message }}</h1>
+    <svg id="notifdismiss" class="dismiss" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="fill: rgb(255, 255, 255);"><path d="m16.192 6.344-4.243 4.242-4.242-4.242-1.414 1.414L10.535 12l-4.242 4.242 1.414 1.414 4.242-4.242 4.243 4.242 1.414-1.414L13.364 12l4.242-4.242z"></path></svg>
   </div>
   {% endif %}
     <section class="main">
@@ -30,7 +31,7 @@
               </svg>
               world
             </h2>
-            <h4>01 July 2023</h4>
+            <h4>{% now "d M Y, D " %}</h4>
         </div>
         <div class="homebox">
           <a href="{% url 'homePage' %}"><h1>SHRINKK</h1></a>
@@ -46,18 +47,8 @@
               </marquee>
             </div>
         </div>
-        <div class="centerbox">
-            <nav>
-              <a href="{% url 'homePage' %}"><h1 class="logo">Shrinkk</h1></a>
-              <div class="navlinks">
-                <a href="#">Home</a>
-                <a href="#">Repository</a>
-                <a href="#stats">Stats</a>
-                <a href="#">Admin</a>
-              </div>
-              <button>Login</button>
-            </nav>
-        </div>
+        {% include 'navBar.html' %}
+        {% include 'loginBox.html' %}
         <section class="shorten">
             <h1>
               Ready to get Started? Shorten <br />
@@ -166,5 +157,27 @@
           </section>
     </section>
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <script>
+      let loginbtn=document.getElementById("loginbtn");
+
+      var element = document.getElementById("loginBox");
+      loginbtn.addEventListener('click',()=>{
+        window.scrollTo(0,700);
+        element.classList.toggle("activebox");
+      });
+
+
+      let dismissbtn=document.getElementById("dismiss");
+      dismissbtn.addEventListener('click',()=>{
+        element.classList.remove("activebox");
+      });
+
+      let notifdismissbtn=document.getElementById("notifdismiss");
+      notifdismissbtn.addEventListener('click',()=>{
+        msgbox=document.getElementById("message");
+        msgbox.classList.toggle("notactivebox");
+      });
+
+    </script>
 </body>
 </html>

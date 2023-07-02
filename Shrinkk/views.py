@@ -19,7 +19,7 @@ db = firebase.database()
 
 def homePage(request):
     data={'message':request.GET.get('status')}
-    subscribers = db.child("subscribers").get()
+    subscribers = db.child("websiteInfo").child('subscribers').get()
     if subscribers.val() == None :
         subscribers = 0
     else:
@@ -32,7 +32,7 @@ def homePage(request):
 def subscribePage(request):
     if request.method == 'POST':
         email = request.POST.get('email')
-        subscribers = db.child("subscribers").get().val()
+        subscribers = db.child('websiteInfo').child('subscribers').get().val()
         if subscribers:
             for key, data in subscribers.items():
                 if 'email' in data and data['email'] == email:
@@ -44,7 +44,19 @@ def subscribePage(request):
                     'email': email,
                     'dateTime': str(time_string),
                 }
-        db.child('subscribers').push(data)
+        db.child('websiteInfo').child('subscribers').push(data)
         status='ThakYou For Subscribing.!'
         return redirect('/?status=' + status)
 
+
+
+def loginPage(request):
+    if request.method == 'POST':
+        email=request.POST.get('email')
+        password=request.POST.get('password')
+        data={'email':email,
+              'password':password
+              }
+        return render(request,'loginPage.html',data) 
+    
+    return redirect("/")

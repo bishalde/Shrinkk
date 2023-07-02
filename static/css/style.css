@@ -28,7 +28,11 @@ html{
     position: absolute;
     top:100px;
     right: 30px;
-    min-width: fit-content;
+    width: 700px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .message h1{
@@ -37,6 +41,11 @@ html{
     font-family: var(--nunitoFont);
 }
 
+.message svg{
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+}
 .main{
     padding: 0px 30px;
 }
@@ -48,6 +57,98 @@ html{
     box-sizing: border-box;
     list-style: none; text-decoration: none;
     user-select: none;
+}
+
+
+
+.loginBox{
+    z-index: 1001;
+    position: sticky;
+    top:50%;
+    left:50%;
+    width: 50%;
+    height: 450px;
+    border-radius: 20px;
+    transform: translate(-50%, -50%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background-color: white;
+    display: none;
+    padding:30px 100px;
+    overflow: hidden;
+}
+.loginBox form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.loginBox svg{
+    position: absolute;
+    top:0px;
+    right: 0px;
+    height: 50px;
+    width: 50px;
+    background-color: #504444;
+    border-bottom-left-radius: 20px;
+    cursor: pointer;
+}
+.loginBox h1{
+    font-family: var(--limelightFont);text-align: center;
+    font-size: 2.5rem;
+}
+.loginBox form label{
+    font-size: 1.5rem;
+    font-family: var(--nunitoFont);
+    color: var(--textFontColor);
+}
+
+.loginBox form input[type='email'],input[type='password']{
+    outline: 0;
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
+    border: 2px solid black;
+    background-color: var(--bgColor);
+    padding: 15px;
+    font-size: 1rem;
+}
+
+.loginBox form input[type='email']::-webkit-input-placeholder,input[type='password']::-webkit-input-placeholder{
+    color: var(--textFontColor);
+}
+
+.loginBox form input[type='submit']{
+    outline: 0;
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
+    border: 0px;
+    background-color: #000000;
+    color: #ffffff;
+    font-size: 1rem;
+    font-family: var(--margarineFont);
+    cursor: pointer;
+}
+
+.loginBox form input[type='button']{
+    outline: 0;
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
+    border: 0px;
+    background-color: var(--textFontColor);
+    font-family: var(--margarineFont);
+    color: #ffffff;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.activebox{
+    display: block;
+}
+
+.notactivebox{
+    display: none;
 }
 
 .main{
@@ -496,6 +597,16 @@ footer .sociallinks svg:hover{
         margin-left: 10px;
         padding: 15px 15px;
     }
+    .loginBox{
+        top:50%;
+        left:50%;
+        width: 70%;
+        height: 450px;
+        transform: translate(-20%, -50%);
+        padding:30px 30px;
+    }
+
+
 
 }
 
@@ -541,6 +652,13 @@ footer .sociallinks svg:hover{
     }
     .stayupdated h4{
         line-height: 30px;
+    }
+    .loginBox{
+        top:50%;
+        left:50%;
+        width: 60%;
+        transform: translate(-30%, -50%);
+        padding:30px 30px;
     }
 
 }
@@ -611,5 +729,14 @@ footer .sociallinks svg:hover{
     .stayupdated h4{
         line-height: 20px;
     }
+    .loginBox{
+        top:50%;
+        left:50%;
+        width: 70%;
+        height: 380px;
+        transform: translate(-20%, -50%);
+        padding:30px 10px;
+    }
+
     
 }

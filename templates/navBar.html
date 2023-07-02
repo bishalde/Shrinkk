@@ -1,0 +1,17 @@
+<div class="centerbox">
+    <nav>
+      <a href="{% url 'homePage' %}"><h1 class="logo">Shrinkk</h1></a>
+      <div class="navlinks">
+        <a href="{% url 'homePage' %}">Home</a>
+        <a href="https://github.com/bishalde/Shrinkk">Repository</a>
+        <a href="#stats">Stats</a>
+        <a href="/admin">Admin</a>
+      </div>
+
+      {% if request.session.username %}
+      <button style="background-color: red;color:white;">SignOut</button>
+      {% else %}
+      <button id="loginbtn">Login</button>
+      {% endif %}
+    </nav>
+</div>
