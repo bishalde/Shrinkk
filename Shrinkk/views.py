@@ -45,7 +45,14 @@ def homePage(request):
 
 def shortenPage(request):
     global DOMAIN
-    data={'urlgenerated_details':None,'message':None,'showdata':None,'domain':DOMAIN}
+    data={'urlgenerated_details':None,'message':None,'showdata':None,'domain':DOMAIN,'url_records':None}
+
+    if request.session.has_key('username'):
+        query=URLInformation.objects.filter(user=request.session['username']).order_by("-created_at")
+        data['url_records']=query
+
+
+
     if request.method == 'POST':
         original_url = request.POST.get('longurl')
         domain = request.POST.get('domain')

@@ -66,10 +66,28 @@
                 {% csrf_token %}
                 <input type="url" name="longurl" id="longurl" placeholder="Enter URL" required>
                 <input type="submit" value="Go">
-                </form>
+              </form>
             </div>
-
+        </div> 
+          <h1>MY Links</h1>  
+          
+        {% for x in url_records %} 
+        <div class="mylinks">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?data={{domain}}{{x.short_code}}&amp;size=100x100" >
+              <div class="urllinks">
+                <h2>Original Link</h2>
+                <a href="{{x.original_url}}">{{x.original_url}}</a>
+                <h2>Short Link</h2>
+                <a href="{{domain}}{{x.short_code}}">{{domain}}{{x.short_code}}</a>
+              </div>
+              <div class="mylinkbtns">
+                <button>Copy Short Link</button>
+                <button>Copy Original Link</button>
+                <button>Statics</button>
+                <button>Delete</button>
+            </div>
         </div>
+        {% endfor %}
         <footer>
             <h3>@SHRINKK-2023</h3>
 
