@@ -43,12 +43,12 @@
         </div>
         {% if showdata != None %}
         <div class="resultbox">
-            <img src="/static/data/qr/{{ urlgenerated_details.short_code }}.png" alt="" srcset="">
+            <img src="{{ qrlink }}" style="border: 10px solid white;">
             <div class="links">
                 <h1>Original Link</h1>
                 <a target="_blank" href="{{ urlgenerated_details.original_url }}"">{{ urlgenerated_details.original_url }}</a>
                 <h1>Short Link</h1>
-                <a target="_blank" href="{{domain}} /{{ urlgenerated_details.short_code }}">{{domain}}/{{urlgenerated_details.short_code}}</a>
+                <a target="_blank" href="{{domain}}{{ urlgenerated_details.short_code }}">{{domain}}{{urlgenerated_details.short_code}}</a>
                 <div class="linkbtns">
                     <button>Copy Short Link</button>
                     <button>Copy Original Link</button>

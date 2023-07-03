@@ -7,7 +7,7 @@ import random
 import string
 import qrcode
 
-DOMAIN="https://shrinkk.onrender.com"
+DOMAIN="https://shrinkk.vercel.app/"
 # Create your views here.
 
 def generate_short_code():
@@ -62,8 +62,9 @@ def shortenPage(request):
                 qr_img = qrcode.QRCode(version = 3,
                         box_size = 4,
                         border = 2)
-                qr_img = qrcode.make("{}/{}".format(DOMAIN,short_code))  
-                qr_img.save("media/data/qr/{}.png".format(short_code))
+                # qr_img = qrcode.make("{}/{}".format(DOMAIN,short_code))  
+                # qr_img.save("media/data/qr/{}.png".format(short_code))
+                data['qrlink']='https://api.qrserver.com/v1/create-qr-code/?data={}{}&amp;size=100x100'.format(DOMAIN,short_code)
                 qurey=URLInformation(original_url=original_url,short_code=short_code,user=user)
                 qurey.save()
                 update_URLSMade()
@@ -86,8 +87,8 @@ def shortenPage(request):
                     qr_img = qrcode.QRCode(version = 3,
                         box_size = 4,
                         border = 2)
-                    qr_img = qrcode.make("{}/{}".format(DOMAIN,short_code))  
-                    qr_img.save("media/data/qr/{}.png".format(short_code))
+                    # qr_img = qrcode.make("{}/{}".format(DOMAIN,short_code))  
+                    # qr_img.save("media/data/qr/{}.png".format(short_code))
                     qurey=URLInformation(original_url=original_url,short_code=short_code,user=user)
                     qurey.save()
                     update_URLSMade()
@@ -98,6 +99,8 @@ def shortenPage(request):
                     'original_url':original_url,
                     'short_code':short_code,
                     }
+                    data['qrlink']='https://api.qrserver.com/v1/create-qr-code/?data={}{}&amp;size=100x100'.format(DOMAIN,short_code)
+
                     data['showdata']="ok"
                     return render(request,'shortenPage.html',data)
 
