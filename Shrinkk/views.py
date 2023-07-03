@@ -1,16 +1,120 @@
 from django.shortcuts import render,redirect
+from django.http import HttpResponse
 import time
 from datetime import date
-from service.models import userInformation,subscriberInformation
+from service.models import *
+import random
+import string
+import qrcode
+
+DOMAIN="https://shrinkk.onrender.com"
 # Create your views here.
+
+def generate_short_code():
+    length = 6  
+    characters = string.ascii_letters + string.digits  
+    short_code = ''.join(random.choice(characters) for _ in range(length))
+    return short_code
+
+
+def update_URLSMade():
+    try:
+        query=URLSMade.objects.get(id=1)
+        query.count+=1
+        query.save()
+    except Exception as e :
+        print(e)
+
 
 def homePage(request):
     data={'message':request.GET.get('status')}
     subscribers = subscriberInformation.objects.filter().count()
+    data["subscribers"] = subscribers
+
     users = userInformation.objects.filter().count()
     data['users']=users
-    data["subscribers"] = subscribers
+
+    URLSMadeCount = URLSMade.objects.get(id=1).count
+    data["URLSMadeCount"] = URLSMadeCount
+
+    URLSClickedCount = URLSClicked.objects.get(id=1).count
+    data["URLSClickedCount"] = URLSClickedCount
+
     return render(request, 'homePage.html',data)
+
+
+def shortenPage(request):
+    global DOMAIN
+    data={'urlgenerated_details':None,'message':None,'showdata':None,'domain':DOMAIN}
+    if request.method == 'POST':
+        original_url = request.POST.get('longurl')
+        domain = request.POST.get('domain')
+        backhalf = request.POST.get('backhalf')
+        user = request.session.get('username')
+        if backhalf != None and len(backhalf)>0 and len(backhalf)<7:
+            short_code=backhalf
+            if URLInformation.objects.filter(short_code=backhalf).exists():
+                status='BackHalf Already Exists.!'
+                data={'message':status}
+                return render(request,'shortenPage.html',data)
+
+            else:
+                qr_img = qrcode.QRCode(version = 3,
+                        box_size = 4,
+                        border = 2)
+                qr_img = qrcode.make("{}/{}".format(DOMAIN,short_code))  
+                qr_img.save("media/data/qr/{}.png".format(short_code))
+                qurey=URLInformation(original_url=original_url,short_code=short_code,user=user)
+                qurey.save()
+                update_URLSMade()
+                status='Short URL CREATED.!'
+                data['message']=status
+                data['urlgenerated_details'] = {
+                    'original_url':original_url,
+                    'short_code':short_code,
+                }
+                data['showdata']="ok"
+                return render(request,'shortenPage.html',data)
+                   
+        else:
+            while True:
+                short_code=generate_short_code()
+                if URLInformation.objects.filter(short_code=short_code).exists():
+                    continue
+
+                else:
+                    qr_img = qrcode.QRCode(version = 3,
+                        box_size = 4,
+                        border = 2)
+                    qr_img = qrcode.make("{}/{}".format(DOMAIN,short_code))  
+                    qr_img.save("media/data/qr/{}.png".format(short_code))
+                    qurey=URLInformation(original_url=original_url,short_code=short_code,user=user)
+                    qurey.save()
+                    update_URLSMade()
+                    status='Short Code CREATED.!'
+
+                    data['message']=status
+                    data['urlgenerated_details'] = {
+                    'original_url':original_url,
+                    'short_code':short_code,
+                    }
+                    data['showdata']="ok"
+                    return render(request,'shortenPage.html',data)
+
+    
+    return render(request,'shortenPage.html',data)
+
+
+def redirecturl(request,short_code):
+    try:
+        query=URLInformation.objects.get(short_code=short_code)
+        query2=URLSClicked.objects.get(id=1)
+        query2.count+=1
+        query2.save()
+
+        return redirect(query.original_url)
+    except:
+        return HttpResponse("<h1>Page Not Found.!</h1>")
 
 
 def subscribePage(request):

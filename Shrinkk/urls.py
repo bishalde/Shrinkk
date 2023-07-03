@@ -28,6 +28,8 @@ urlpatterns = [
     path('login/', views.loginPage, name='loginPage'),
     path('signup/', views.signupPage, name='signupPage'),
     path('logout/', views.logoutPage, name='logoutPage'),
+    path('shorten/', views.shortenPage, name='shortenPage'),
+    path('<str:short_code>/', views.redirecturl, name='redirecturl'),
     
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

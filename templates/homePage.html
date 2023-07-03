@@ -68,7 +68,8 @@
             <br />
             <div class="shortner-box">
               <h3>Shorten a long link</h3>
-              <form action="#" method="post">
+              <form action="{% url 'shortenPage' %}" method="post">
+                {% csrf_token %}
                 <label for="longurl">Paste a long URL</label>
                 <input
                   type="url"
@@ -78,11 +79,11 @@
                 />
                 <label for="domain">Domain</label>
                 <div class="inputbox">
-                    <input type="text" value="shrinkk.vercel.app" disabled />
+                    <input type="text" name="domain" value="shrinkk.vercel.app" disabled />
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(0, 0, 0, 1);"><path d="M20 12c0-1.103-.897-2-2-2h-1V7c0-2.757-2.243-5-5-5S7 4.243 7 7v3H6c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-8zM9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7z"></path></svg>
                 </div>
                 <label for="backhalf">Enter a back-half &nbsp; [ OPTIONAL *]</label>
-                <input type="text" name="backhalf" id="backhalf" placeholder="Example: favourite-link">
+                <input type="text" name="backhalf" maxlength="6" id="backhalf" placeholder="Example: favourite-link">
     
                 <div class="forminfo">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(80, 68, 68, 1);"><path d="M21.947 9.179a1.001 1.001 0 0 0-.868-.676l-5.701-.453-2.467-5.461a.998.998 0 0 0-1.822-.001L8.622 8.05l-5.701.453a1 1 0 0 0-.619 1.713l4.213 4.107-1.49 6.452a1 1 0 0 0 1.53 1.057L12 18.202l5.445 3.63a1.001 1.001 0 0 0 1.517-1.106l-1.829-6.4 4.536-4.082c.297-.268.406-.686.278-1.065z"></path></svg>
@@ -96,7 +97,7 @@
                 <h1>Our Statistics</h1>
                 <div class="statsbox">
                     <div class="statdata">
-                        <h1>10000+</h1>
+                        <h1>{{ URLSMadeCount }}</h1>
                         <h5>Links Generated</h5>
                     </div>
                     <div class="statdata" >
@@ -104,7 +105,7 @@
                         <h5>Users</h5>
                     </div>
                     <div class="statdata">
-                        <h1>100+</h1>
+                        <h1>{{ URLSClickedCount }}</h1>
                         <h5>Links Clicked</h5>
                     </div>
                     <div class="statdata">

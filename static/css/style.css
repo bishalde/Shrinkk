@@ -538,7 +538,139 @@ footer .sociallinks svg:hover{
     scale: 1.5;
 }
 
+.shortenmain{
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--bgColor);
+    padding: 30px 30px 30px 30px;
 
+}
+.shortenBox{
+    margin-top: 30px;
+    width: 100%;
+    min-height: 300px;
+    display: flex;
+    border-radius: 10px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color2);
+}
+.resultbox{
+    padding: 20px;
+    margin-top: 30px;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    gap: 10px;
+    border-radius: 10px;
+    background-color: #c7c7c7;
+    box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+}
+
+
+.resultbox img{
+    height: 12rem;
+    width: 12rem;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px 3px;
+}
+
+.resultbox h1{
+    margin: 10px 0px;
+    font-size: 2rem;
+    font-family: var(--nunitoFont);
+    color: #000000;
+}
+
+.resultbox a{
+    font-size: 1rem;
+    font-family: var(--poppiFont);
+    color: #000000;
+}
+
+.resultbox .linkbtns button{
+    display: inline-block;
+    outline: none;
+    cursor: pointer;
+    font-weight: 600;
+    border-radius: 3px;
+    padding: 12px 24px;
+    border: 0;
+    color: #fff;
+    background: #000a47;
+    line-height: 1.15;
+    font-size: 16px;
+}
+
+.resultbox .linkbtns button:nth-child(2n){
+    background-color: var(--textFontColor);
+}
+
+.resultbox .linkbtns button:hover {
+    transition: all .1s ease;
+    background-color: #000000;
+    color: #ffffff;
+    box-shadow: 0 0 0 0 #fff, 0 0 0 3px #1de9b6;
+}
+
+
+
+
+
+.shortenBox h1{
+    font-size: 5rem;
+    font-family: var(--limelightFont);
+    color: #000000;
+}
+
+.shortenBox h4{
+    font-size: 1rem;
+    line-height: 30px;
+    text-align: center;
+    font-family: var(--margarineFont);
+    color: var(--textFontColor);
+}
+
+.urlbox{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:10px;
+    width: 100%;
+    padding: 10px 50px;
+}
+
+.shortenBox .urlbox form {
+    width: 100%;
+    text-align: center;
+}
+
+.shortenBox .urlbox form  input[type='url']{
+    padding: 10px;
+    width: 60%;
+    border: 2px solid black;
+    border-radius: 10px;
+    font-family: var(--poppiFont);
+    font-size: 1rem;
+}
+
+.shortenBox input[type="submit"]{
+    width: 80px;
+    font-size: 1.2rem;
+    background-color: #000000;
+    border: 0px;
+    border-radius: 20px;
+    color: #ffffff;
+    padding: 15px;
+    cursor: pointer;
+}
+
+
+
+/* SHORTNER PAGE */
 
 
 ::-webkit-scrollbar-track

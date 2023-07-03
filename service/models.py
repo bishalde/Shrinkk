@@ -16,3 +16,30 @@ class subscriberInformation(models.Model):
 
     def __str__(self):
         return self.email
+    
+class URLInformation(models.Model):
+    original_url = models.URLField()
+    short_code = models.CharField(max_length=10, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.short_code
+
+class URLSMade(models.Model):
+    count=models.PositiveBigIntegerField(default=0)
+
+    def __str__(self):
+        return str(self.count)
+
+class URLSClicked(models.Model):
+    count=models.PositiveBigIntegerField(default=0)
+    def __str__(self):
+        return str(self.count)
+
+
+
+
+
+
+
