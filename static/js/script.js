@@ -31,7 +31,7 @@ let loginbtn=document.getElementById("loginbtn");
         navigator.clipboard
           .writeText(text)
           .then(function () {
-            alert("Link copied to clipboard: " + text);
+            console.log("Link copied to clipboard: " + text);
           })
           .catch(function (err) {
             console.error("Failed to copy: ", err);
