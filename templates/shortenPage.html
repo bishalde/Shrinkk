@@ -46,12 +46,12 @@
             <img src="{{ qrlink }}" style="border: 10px solid white;">
             <div class="links">
                 <h1>Original Link</h1>
-                <a target="_blank" href="{{ urlgenerated_details.original_url }}"">{{ urlgenerated_details.original_url }}</a>
+                <a id="originalLink" target="_blank" href="{{ urlgenerated_details.original_url }}">{{ urlgenerated_details.original_url }}</a>
                 <h1>Short Link</h1>
-                <a target="_blank" href="{{domain}}{{ urlgenerated_details.short_code }}">{{domain}}{{urlgenerated_details.short_code}}</a>
+                <a id="shortLink" target="_blank" href="{{domain}}{{ urlgenerated_details.short_code }}">{{domain}}{{urlgenerated_details.short_code}}</a>
                 <div class="linkbtns">
-                    <button>Copy Short Link</button>
-                    <button>Copy Original Link</button>
+                    <button onclick="copyLink('shortLink')">Copy Short Link</button>
+                    <button onclick="copyLink('originalLink')">Copy Original Link</button>
                     <button>Statics</button>
                     <button>Delete</button>
                 </div>
