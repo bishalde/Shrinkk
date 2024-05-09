@@ -263,6 +263,16 @@ nav .navlinks a{
     font-size: 1rem;
 }
 
+nav .navlinks a:hover {
+    font-family: var(--nunitoFont);
+    font-size: .8rem;
+    background-color: var(--color2);
+    padding: 10px 20px;
+    border-radius: 10px;
+    outline: none;
+    border: 1px solid black;
+}
+
 nav button{
     font-family: var(--nunitoFont);
     font-size: .8rem;
