@@ -17,3 +17,24 @@ let loginbtn=document.getElementById("loginbtn");
         msgbox=document.getElementById("message");
         msgbox.classList.toggle("notactivebox");
       });
+
+
+      function copyLink(elementId) {
+        var linkElement = document.getElementById(elementId);
+        if (linkElement) {
+          var link = linkElement.getAttribute("href");
+          copyToClipboard(link);
+        }
+      }
+      
+      function copyToClipboard(text) {
+        navigator.clipboard
+          .writeText(text)
+          .then(function () {
+            console.log("Link copied to clipboard: " + text);
+          })
+          .catch(function (err) {
+            console.error("Failed to copy: ", err);
+          });
+      }
+      
