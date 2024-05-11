@@ -44,7 +44,7 @@
 <img src="https://i.imgur.com/dBaSKWF.gif" height="20" width="100%">
 
 #### Shrinkk-Shorten Your LINKS Like Never Before.!
-Shrinkk is the ultimate link shortening tool that revolutionizes the way you share URLs. With its cutting-edge technology, Shrinkk effortlessly shortens your long, cumbersome links into compact, shareable ones. Say goodbye to unsightly and intimidating URLs that discourage clicks. Shrinkk provides a sleek, elegant solution that not only saves characters but also enhances the aesthetics of your shared content. Its lightning-fast process ensures that your shortened links are ready in an instant, saving you precious time. Boost your online presence, increase engagement, and maximize click-through rates with Shrinkk's powerful link shrinking capabilities. Experience the future of link management with Shrinkk.
+Shrinkk is the ultimate link-shortening tool that revolutionizes the way you share URLs. With its cutting-edge technology, Shrinkk effortlessly shortens your long, cumbersome links into compact, shareable ones. Say goodbye to unsightly and intimidating URLs that discourage clicks. Shrinkk provides a sleek, elegant solution that not only saves characters but also enhances the aesthetics of your shared content. Its lightning-fast process ensures that your shortened links are ready in an instant, saving you precious time. Boost your online presence, increase engagement, and maximize click-through rates with Shrinkk's powerful link-shrinking capabilities. Experience the future of link management with Shrinkk.
 ### Features 😱
 <img src="https://i.imgur.com/dBaSKWF.gif" height="20" width="100%">
 
@@ -53,7 +53,7 @@ Shrinkk is the ultimate link shortening tool that revolutionizes the way you sha
 - Secure and Reliable
 - Advanced Link Shortening
 - Secure and Reliable
-- Cross platform
+- Cross-platform
 
 ### Installation Of Modules 🚀
 <img src="https://i.imgur.com/dBaSKWF.gif" height="20" width="100%">
