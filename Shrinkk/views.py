@@ -55,61 +55,66 @@ def shortenPage(request):
 
     if request.method == 'POST':
         original_url = request.POST.get('longurl')
-        domain = request.POST.get('domain')
-        backhalf = request.POST.get('backhalf')
-        user = request.session.get('username')
-        if backhalf != None and len(backhalf)>0 and len(backhalf)<7:
-            short_code=backhalf
-            if URLInformation.objects.filter(short_code=backhalf).exists():
-                status='BackHalf Already Exists.!'
-                data={'message':status}
-                return render(request,'shortenPage.html',data)
-
-            else:
-                qr_img = qrcode.QRCode(version = 3,
-                        box_size = 4,
-                        border = 2)
-                # qr_img = qrcode.make("{}/{}".format(DOMAIN,short_code))  
-                # qr_img.save("media/data/qr/{}.png".format(short_code))
-                data['qrlink']='https://api.qrserver.com/v1/create-qr-code/?data={}{}&amp;size=100x100'.format(DOMAIN,short_code)
-                qurey=URLInformation(original_url=original_url,short_code=short_code,user=user)
-                qurey.save()
-                update_URLSMade()
-                status='Short URL CREATED.!'
-                data['message']=status
-                data['urlgenerated_details'] = {
-                    'original_url':original_url,
-                    'short_code':short_code,
-                }
-                data['showdata']="ok"
-                return render(request,'shortenPage.html',data)
-                   
-        else:
-            while True:
-                short_code=generate_short_code()
-                if URLInformation.objects.filter(short_code=short_code).exists():
-                    continue
+        if request.POST.get('longurl'):
+            domain = request.POST.get('domain')
+            backhalf = request.POST.get('backhalf')
+            user = request.session.get('username')
+            if backhalf != None and len(backhalf)>0 and len(backhalf)<7:
+                short_code=backhalf
+                if URLInformation.objects.filter(short_code=backhalf).exists():
+                    status='BackHalf Already Exists.!'
+                    data={'message':status}
+                    return render(request,'shortenPage.html',data)
 
                 else:
                     qr_img = qrcode.QRCode(version = 3,
-                        box_size = 4,
-                        border = 2)
+                            box_size = 4,
+                            border = 2)
                     # qr_img = qrcode.make("{}/{}".format(DOMAIN,short_code))  
                     # qr_img.save("media/data/qr/{}.png".format(short_code))
+                    data['qrlink']='https://api.qrserver.com/v1/create-qr-code/?data={}{}&amp;size=100x100'.format(DOMAIN,short_code)
                     qurey=URLInformation(original_url=original_url,short_code=short_code,user=user)
                     qurey.save()
                     update_URLSMade()
-                    status='Short Code CREATED.!'
-
+                    status='Short URL CREATED.!'
                     data['message']=status
                     data['urlgenerated_details'] = {
-                    'original_url':original_url,
-                    'short_code':short_code,
+                        'original_url':original_url,
+                        'short_code':short_code,
                     }
-                    data['qrlink']='https://api.qrserver.com/v1/create-qr-code/?data={}{}&amp;size=100x100'.format(DOMAIN,short_code)
-
                     data['showdata']="ok"
                     return render(request,'shortenPage.html',data)
+                    
+            else:
+                while True:
+                    short_code=generate_short_code()
+                    if URLInformation.objects.filter(short_code=short_code).exists():
+                        continue
+
+                    else:
+                        qr_img = qrcode.QRCode(version = 3,
+                            box_size = 4,
+                            border = 2)
+                        # qr_img = qrcode.make("{}/{}".format(DOMAIN,short_code))  
+                        # qr_img.save("media/data/qr/{}.png".format(short_code))
+                        qurey=URLInformation(original_url=original_url,short_code=short_code,user=user)
+                        qurey.save()
+                        update_URLSMade()
+                        status='Short Code CREATED.!'
+
+                        data['message']=status
+                        data['urlgenerated_details'] = {
+                        'original_url':original_url,
+                        'short_code':short_code,
+                        }
+                        data['qrlink']='https://api.qrserver.com/v1/create-qr-code/?data={}{}&amp;size=100x100'.format(DOMAIN,short_code)
+
+                        data['showdata']="ok"
+                        return render(request,'shortenPage.html',data)
+        else:
+            status='Enter a link.!'
+            data['message'] = status
+            return render(request, 'homePage.html', data)
 
     
     return render(request,'shortenPage.html',data)
