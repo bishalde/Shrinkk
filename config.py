@@ -9,20 +9,12 @@ def _is_production():
     return os.getenv("VERCEL_ENV") == "production" or os.getenv("FLASK_ENV") == "production"
 
 
-def _base_url():
-    # Explicit BASE_URL wins; on Vercel fall back to the production domain (shrinkk.vercel.app).
-    if os.getenv("BASE_URL"):
-        return os.getenv("BASE_URL")
-    if os.getenv("VERCEL_PROJECT_PRODUCTION_URL"):
-        return f"https://{os.getenv('VERCEL_PROJECT_PRODUCTION_URL')}"
-    return "http://localhost:8080"
-
-
 class Config:
     MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
     MONGO_DB = os.getenv("MONGO_DB", "shrinkk")
     SECRET_KEY = os.getenv("SECRET_KEY") or os.getenv("JWT_SECRET_KEY") or "dev-insecure-change-me"
-    BASE_URL = _base_url().rstrip("/")
+    # Optional canonical origin for short links; when unset, the domain the site was visited on is used.
+    BASE_URL = os.getenv("BASE_URL", "").rstrip("/")
 
     PERMANENT_SESSION_LIFETIME = timedelta(days=30)
     SESSION_COOKIE_HTTPONLY = True

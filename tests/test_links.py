@@ -110,3 +110,14 @@ def test_link_stats(client, user, repos):
     assert stats["total"] == 3
     assert stats["series"][-1]["count"] == 3 and len(stats["series"]) == 7
     assert stats["by_source"] == [{"label": "qr", "count": 3}]
+
+
+def test_short_urls_use_the_visited_domain_when_base_url_unset(app, client):
+    app.config["BASE_URL"] = ""
+    site = "https://shrinkk.vercel.app"
+    client.post("/signup", data={"username": "alice", "email": "alice@example.com", "password": "password123"}, base_url=site)
+    res = client.post("/api/links", json={"original_url": "https://example.com/a", "custom_alias": "launch"}, base_url=site)
+    assert res.get_json()["short_url"] == f"{site}/launch"
+    assert "shrinkk.vercel.app/launch" in client.get("/", base_url=site).get_data(as_text=True)
+    # Links to the site itself are still rejected on whatever domain it runs on.
+    assert client.post("/api/links", json={"original_url": f"{site}/x"}, base_url=site).status_code == 400

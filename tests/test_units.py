@@ -56,11 +56,3 @@ def test_formatting():
     assert flag("US") == "🇺🇸"
     assert flag(None) == "🌐"
 
-
-def test_base_url_falls_back_to_vercel_production_domain(monkeypatch):
-    from config import _base_url
-    monkeypatch.delenv("BASE_URL", raising=False)
-    monkeypatch.setenv("VERCEL_PROJECT_PRODUCTION_URL", "shrinkk.vercel.app")
-    assert _base_url() == "https://shrinkk.vercel.app"
-    monkeypatch.setenv("BASE_URL", "https://shr.ink")
-    assert _base_url() == "https://shr.ink"

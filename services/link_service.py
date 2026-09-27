@@ -2,10 +2,9 @@
 from datetime import datetime, time, timedelta, timezone
 from urllib.parse import urlparse
 
-from flask import current_app
-
 from extensions import repos
 from services.shortener import generate_unique_code
+from utils.helpers import public_base_url
 from utils.validators import is_hex_color, is_valid_alias, is_valid_url
 
 MAX_TAGS = 10
@@ -26,7 +25,7 @@ def normalize_url(raw):
         url = f"https://{url}"
     if not is_valid_url(url):
         raise LinkError("Enter a valid URL, like https://example.com.")
-    own_host = urlparse(current_app.config["BASE_URL"]).netloc
+    own_host = urlparse(public_base_url()).netloc
     if urlparse(url).netloc.lower() == own_host.lower():
         raise LinkError("That's already a Shrinkk link.")
     return url

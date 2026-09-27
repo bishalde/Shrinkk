@@ -1,8 +1,13 @@
 from functools import wraps
 
-from flask import flash, g, jsonify, redirect, request, session, url_for
+from flask import current_app, flash, g, jsonify, redirect, request, session, url_for
 
 from extensions import repos
+
+
+def public_base_url():
+    """Origin used in short links and QR codes: BASE_URL if configured, else the current host."""
+    return current_app.config["BASE_URL"] or request.host_url.rstrip("/")
 
 
 def current_user():

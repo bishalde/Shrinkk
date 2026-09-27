@@ -1,11 +1,11 @@
 """Public, unauthenticated routes: bio pages, QR codes, avatars and short-link redirects."""
-from flask import Blueprint, abort, current_app, redirect, render_template, request, send_file, url_for
+from flask import Blueprint, abort, redirect, render_template, request, send_file, url_for
 
 from extensions import limiter, repos
 from services import socials, themes
 from services.qr_generator import DEFAULT_BG, DEFAULT_FG, generate_png, generate_svg
 from services.request_info import visitor
-from utils.helpers import current_user
+from utils.helpers import current_user, public_base_url
 from utils.validators import is_hex_color
 
 public_bp = Blueprint("public", __name__)
@@ -49,7 +49,7 @@ def profile(username):
         socials=socials.for_display(user.get("socials")),
         look=themes.resolve(user.get("appearance")),
         avatar_url=url_for("public.avatar", file_id=user["avatar_id"]) if user.get("avatar_id") else None,
-        profile_url=f"{current_app.config['BASE_URL']}/@{user['username']}",
+        profile_url=f"{public_base_url()}/@{user['username']}",
         is_owner=is_owner,
     )
 
@@ -59,7 +59,7 @@ def profile_qr(username, fmt):
     user = repos().users.find_by_username(username.lower())
     if not user or fmt not in QR_FORMATS:
         abort(404)
-    url = f"{current_app.config['BASE_URL']}/@{user['username']}"
+    url = f"{public_base_url()}/@{user['username']}"
     return _qr_response(url, f"shrinkk-{user['username']}", fmt, DEFAULT_FG, DEFAULT_BG)
 
 
@@ -74,7 +74,7 @@ def link_qr(short_code, fmt):
     link = repos().links.find_by_short_code(short_code)
     if not link or fmt not in QR_FORMATS:
         abort(404)
-    url = f"{current_app.config['BASE_URL']}/{short_code}?src=qr"
+    url = f"{public_base_url()}/{short_code}?src=qr"
     qr = link.get("qr") or {}
     return _qr_response(url, f"qr-{short_code}", fmt, qr.get("fg") or DEFAULT_FG, qr.get("bg") or DEFAULT_BG)
 

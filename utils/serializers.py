@@ -1,11 +1,10 @@
-from flask import current_app
-
 from models.link_model import LinkModel
 from utils.formatting import domain
+from utils.helpers import public_base_url
 
 
 def serialize_link(link):
-    base = current_app.config["BASE_URL"]
+    base = public_base_url()
     expires_at = link.get("expires_at")
     return {
         "id": str(link["_id"]),

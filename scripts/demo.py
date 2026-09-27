@@ -22,7 +22,7 @@ from app import create_app  # noqa: E402
 
 db = mongomock.MongoClient(tz_aware=True).db
 PORT = int(os.getenv("PORT", 8080))
-app = create_app({"RATELIMIT_ENABLED": False, "BASE_URL": f"http://localhost:{PORT}"}, db=db)
+app = create_app({"RATELIMIT_ENABLED": False}, db=db)
 r = app.extensions["repos"]
 r.ensure_indexes()
 

@@ -39,12 +39,12 @@ Users created before the revamp have no username; they're asked to pick one on t
 | `MONGO_URI`  | `mongodb://localhost:27017` | `mongomock://` gives an in-memory database     |
 | `MONGO_DB`   | `shrinkk`                   |                                                |
 | `SECRET_KEY` | dev placeholder             | **Required** in production; the app refuses to start without it |
-| `BASE_URL`   | `http://localhost:8080`     | Public origin used in short links and QR codes. On Vercel it falls back to the production domain |
+| `BASE_URL`   | visited domain              | Optional. Forces the origin used in short links and QR codes; unset means whatever domain the site is served from |
 
 ## Deploying to Vercel
 
 1. Import the repo in Vercel. `vercel.json` already sets the build command (`npm run build`), serves `public/` from the CDN and routes everything else to the Flask function in `api/index.py`.
-2. Add `MONGO_URI`, `MONGO_DB` and `SECRET_KEY` in Project → Settings → Environment Variables. Set `BASE_URL=https://shrinkk.vercel.app` (or your custom domain); if omitted, Vercel's production domain is used.
+2. Add `MONGO_URI`, `MONGO_DB` and `SECRET_KEY` in Project → Settings → Environment Variables. Don't set `BASE_URL` unless you want to force one domain; short links follow whatever domain serves the site (shrinkk.vercel.app, previews, custom domains).
 3. In MongoDB Atlas, allow access from Vercel (Network Access → `0.0.0.0/0`, or Vercel's static IPs on paid plans).
 4. Run `scripts/init_db.py` once against the production database.
 

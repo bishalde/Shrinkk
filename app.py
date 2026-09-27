@@ -3,11 +3,12 @@ from datetime import datetime, timezone
 
 from flask import Flask, render_template, request
 from pymongo import MongoClient
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import Config
 from extensions import csrf, limiter
 from models import Repos
-from utils.helpers import current_user
+from utils.helpers import current_user, public_base_url
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -24,6 +25,10 @@ def create_app(config_overrides=None, db=None):
 
     if app.config["PRODUCTION"] and app.config["SECRET_KEY"] == "dev-insecure-change-me":
         raise RuntimeError("Set SECRET_KEY in the environment before running in production.")
+
+    if os.getenv("VERCEL"):
+        # Trust Vercel's proxy for the real scheme and host (https://shrinkk.vercel.app, custom domains).
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
     if db is None:
         db = _connect(app.config["MONGO_URI"], app.config["MONGO_DB"])
@@ -64,10 +69,11 @@ def _register_template_helpers(app):
 
     @app.context_processor
     def inject_globals():
+        base_url = public_base_url()
         return {
             "current_user": current_user(),
-            "base_url": app.config["BASE_URL"],
-            "base_host": app.config["BASE_URL"].split("://", 1)[-1],
+            "base_url": base_url,
+            "base_host": base_url.split("://", 1)[-1],
             "now_year": datetime.now(timezone.utc).year,
         }
 
