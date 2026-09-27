@@ -100,10 +100,10 @@
         </div>
         <div class="flex flex-wrap gap-2">
           <label class="btn btn-primary btn-sm cursor-pointer">{{ icon('upload', 'icon-sm') }} Upload photo
-            <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="sr-only" @change="uploadAvatar($event)">
+            <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="sr-only" @change="pickAvatar($event)">
           </label>
           <button type="button" x-show="profile.avatar_url" class="btn btn-ghost btn-sm" @click="removeAvatar()">Remove</button>
-          <p class="basis-full text-xs text-muted">JPG, PNG, WebP or GIF · up to 2 MB</p>
+          <p class="basis-full text-xs text-muted">JPG, PNG, WebP or GIF · up to 15 MB · crop before saving</p>
         </div>
       </div>
       <div>
@@ -233,5 +233,40 @@
       </div>
     </div>
   </aside>
+  {# Avatar crop dialog #}
+  <div x-show="crop.show" x-cloak class="fixed inset-0 z-[60] flex items-end justify-center sm:items-center sm:p-4" role="dialog" aria-modal="true" aria-labelledby="crop-title" @keydown.escape.window="crop.show && closeCrop()">
+    <div x-show="crop.show" x-transition.opacity class="absolute inset-0 bg-ink/50 backdrop-blur-sm" @click="closeCrop()"></div>
+    <div x-show="crop.show" x-transition:enter="transition duration-200 ease-out" x-transition:enter-start="translate-y-4 opacity-0 sm:scale-95" x-transition:enter-end="translate-y-0 opacity-100 sm:scale-100"
+         class="relative w-full rounded-t-3xl bg-white p-6 shadow-float sm:max-w-md sm:rounded-3xl sm:p-7">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 id="crop-title" class="text-lg font-bold">Crop your photo</h2>
+          <p class="text-sm text-muted">Drag to move, use the slider or scroll to zoom.</p>
+        </div>
+        <button type="button" class="btn-icon -mt-1 -mr-2" @click="closeCrop()" aria-label="Close">{{ icon('x') }}</button>
+      </div>
+
+      <div x-ref="cropBox" tabindex="0" aria-label="Crop area. Use arrow keys to move the photo, plus and minus to zoom."
+           class="relative mx-auto mt-6 aspect-square w-full max-w-72 cursor-grab touch-none select-none overflow-hidden rounded-2xl bg-cultured outline-none focus-visible:ring-2 focus-visible:ring-brand-500 active:cursor-grabbing"
+           @pointerdown.prevent="cropDragStart($event)" @pointermove="cropDragMove($event)" @pointerup="cropDragEnd()" @pointercancel="cropDragEnd()"
+           @wheel.prevent="setCropZoom(crop.zoom - $event.deltaY * 0.002)"
+           @keydown.left.prevent="cropNudge(10, 0)" @keydown.right.prevent="cropNudge(-10, 0)" @keydown.up.prevent="cropNudge(0, 10)" @keydown.down.prevent="cropNudge(0, -10)"
+           @keydown="['+', '='].includes($event.key) ? setCropZoom(crop.zoom + 0.1) : ($event.key === '-' && setCropZoom(crop.zoom - 0.1))">
+        <img :src="crop.src" alt="" draggable="false" class="pointer-events-none absolute left-0 top-0 max-w-none origin-top-left" :style="cropStyle()">
+        <div class="pointer-events-none absolute inset-0 rounded-full shadow-[0_0_0_9999px_rgba(16,16,16,0.55)] ring-2 ring-white/90"></div>
+      </div>
+
+      <div class="mx-auto mt-5 flex max-w-72 items-center gap-3">
+        <button type="button" class="btn-icon" @click="setCropZoom(crop.zoom - 0.25)" aria-label="Zoom out">{{ icon('zoom-out', 'icon-sm') }}</button>
+        <input type="range" min="1" max="4" step="0.01" :value="crop.zoom" @input="setCropZoom(+$event.target.value)" aria-label="Zoom" class="h-1.5 w-full cursor-pointer accent-brand-500">
+        <button type="button" class="btn-icon" @click="setCropZoom(crop.zoom + 0.25)" aria-label="Zoom in">{{ icon('zoom-in', 'icon-sm') }}</button>
+      </div>
+
+      <div class="mt-6 flex justify-end gap-2">
+        <button type="button" class="btn btn-ghost" @click="closeCrop()">Cancel</button>
+        <button type="button" class="btn btn-primary" @click="saveCrop()">{{ icon('check', 'icon-sm') }} Save photo</button>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

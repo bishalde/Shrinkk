@@ -129,11 +129,29 @@ def _register_error_handlers(app):
                                message="Refresh the page and try again."), 400
 
     @app.errorhandler(500)
-    def server_error(_e):
+    def server_error(e):
+        ref = _error_reference(getattr(e, "original_exception", None))
         if wants_json():
-            return jsonify({"error": "Something went wrong."}), 500
+            return jsonify({"error": "Something went wrong.", "reference": ref}), 500
         return render_template("errors/error.html", code=500, title="Something went wrong",
-                               message="We hit an unexpected error. Please try again."), 500
+                               message="We hit an unexpected error. Please try again.", reference=ref), 500
+
+
+def _error_reference(exc):
+    """Error type and the deepest line of our own code, e.g. "KeyError at routes/public.py:52".
+
+    Safe to show publicly (no values or messages) and enough to find the bug from a screenshot.
+    """
+    if exc is None:
+        return None
+    import traceback
+
+    where = None
+    for frame in traceback.extract_tb(exc.__traceback__):
+        path = os.path.relpath(frame.filename, BASE_DIR)
+        if not path.startswith("..") and ".venv" not in path and "site-packages" not in path:
+            where = f"{path}:{frame.lineno}"
+    return f"{type(exc).__name__} at {where}" if where else type(exc).__name__
 
 
 if __name__ == "__main__":

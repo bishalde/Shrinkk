@@ -90,3 +90,15 @@ def test_fresh_database_gets_indexes_on_first_request():
     assert "email_1" not in db.users.index_information()
     app.test_client().get("/")
     assert db.users.index_information()["email_1"].get("unique")
+
+
+def test_server_error_page_shows_safe_reference(app, client, monkeypatch):
+    app.config["PROPAGATE_EXCEPTIONS"] = False
+
+    def boom(*_args, **_kwargs):
+        raise KeyError("secret-value")
+
+    monkeypatch.setattr(app.extensions["repos"].users, "find_by_username", boom)
+    page = client.get("/@anyone").get_data(as_text=True)
+    assert "Reference: KeyError at tests/test_auth.py:" in page  # deepest frame of our own code
+    assert "secret-value" not in page

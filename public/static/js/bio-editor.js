@@ -28,6 +28,10 @@ function resolveLook(appearance, cfg) {
   };
 }
 
+const CROP_MAX_BYTES = 15 * 1024 * 1024;  // the original never leaves the browser, only the crop does
+const CROP_MAX_ZOOM = 4;
+const CROP_OUTPUT = 800;  // px; the server downsizes to 400 for the stored avatar
+
 function debounce(fn, ms) {
   let t;
   return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
@@ -47,6 +51,7 @@ function bioEditor(init) {
     newLink: { title: "", original_url: "" },
     adding: false,
     uploading: false,
+    crop: { show: false, src: null, img: null, w: 0, h: 0, zoom: 1, x: 0, y: 0, drag: null },
     status: "saved", // saving | saved | error
 
     init() {
@@ -152,13 +157,97 @@ function bioEditor(init) {
     },
 
     // --- avatar ----------------------------------------------------------
-    async uploadAvatar(event) {
+    // Picking a photo opens a crop dialog; only the cropped square is uploaded.
+    pickAvatar(event) {
       const file = event.target.files[0];
       event.target.value = "";
       if (!file) return;
-      if (file.size > 2 * 1024 * 1024) { toast("Images must be 2 MB or smaller.", "error"); return; }
+      if (!file.type.startsWith("image/")) { toast("Upload a JPG, PNG, WebP or GIF image.", "error"); return; }
+      if (file.size > CROP_MAX_BYTES) { toast("Images must be 15 MB or smaller.", "error"); return; }
+      const src = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        Object.assign(this.crop, { show: true, src, img, w: img.naturalWidth, h: img.naturalHeight, zoom: 1 });
+        this.$nextTick(() => {
+          const box = this.$refs.cropBox.clientWidth;
+          const s = this.cropScale();
+          this.crop.x = (box - this.crop.w * s) / 2;
+          this.crop.y = (box - this.crop.h * s) / 2;
+        });
+      };
+      img.onerror = () => { URL.revokeObjectURL(src); toast("That file couldn't be read as an image.", "error"); };
+      img.src = src;
+    },
+
+    // Scale at which the image exactly covers the crop box, times the zoom slider.
+    cropScale() {
+      const box = this.$refs.cropBox.clientWidth;
+      return Math.max(box / this.crop.w, box / this.crop.h) * this.crop.zoom;
+    },
+
+    cropStyle() {
+      if (!this.crop.src) return "";
+      const s = this.cropScale();
+      return `width:${this.crop.w * s}px;height:${this.crop.h * s}px;transform:translate(${this.crop.x}px,${this.crop.y}px)`;
+    },
+
+    // Keep the image covering the whole box so the result never has empty corners.
+    clampCrop() {
+      const box = this.$refs.cropBox.clientWidth;
+      const s = this.cropScale();
+      this.crop.x = Math.min(0, Math.max(box - this.crop.w * s, this.crop.x));
+      this.crop.y = Math.min(0, Math.max(box - this.crop.h * s, this.crop.y));
+    },
+
+    setCropZoom(zoom) {
+      const center = this.$refs.cropBox.clientWidth / 2;
+      const before = this.cropScale();
+      this.crop.zoom = Math.min(CROP_MAX_ZOOM, Math.max(1, zoom));
+      const ratio = this.cropScale() / before;
+      this.crop.x = center - (center - this.crop.x) * ratio;  // zoom around the middle of the box
+      this.crop.y = center - (center - this.crop.y) * ratio;
+      this.clampCrop();
+    },
+
+    cropDragStart(e) {
+      e.currentTarget.setPointerCapture(e.pointerId);
+      this.crop.drag = { px: e.clientX, py: e.clientY, x: this.crop.x, y: this.crop.y };
+    },
+    cropDragMove(e) {
+      const d = this.crop.drag;
+      if (!d) return;
+      this.crop.x = d.x + e.clientX - d.px;
+      this.crop.y = d.y + e.clientY - d.py;
+      this.clampCrop();
+    },
+    cropDragEnd() { this.crop.drag = null; },
+
+    cropNudge(dx, dy) {
+      this.crop.x += dx;
+      this.crop.y += dy;
+      this.clampCrop();
+    },
+
+    closeCrop() {
+      if (this.crop.src) URL.revokeObjectURL(this.crop.src);
+      Object.assign(this.crop, { show: false, src: null, img: null, drag: null });
+    },
+
+    async saveCrop() {
+      const box = this.$refs.cropBox.clientWidth;
+      const ratio = CROP_OUTPUT / box;
+      const s = this.cropScale();
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = CROP_OUTPUT;
+      const ctx = canvas.getContext("2d");
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(this.crop.img, this.crop.x * ratio, this.crop.y * ratio, this.crop.w * s * ratio, this.crop.h * s * ratio);
+      // Browsers without WebP encoding fall back to PNG, which the server also accepts.
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/webp", 0.92));
+      this.closeCrop();
+      if (!blob) { toast("Couldn't crop that image. Try another one.", "error"); return; }
       const form = new FormData();
-      form.append("avatar", file);
+      form.append("avatar", blob, blob.type === "image/webp" ? "avatar.webp" : "avatar.png");
       this.uploading = true;
       try {
         const data = await api("/api/bio/avatar", { method: "POST", form });
