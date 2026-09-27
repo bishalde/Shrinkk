@@ -20,7 +20,7 @@
 </svg>
 {%- endmacro %}
 
-{% macro phone(theme="classic", name="Maya Chen", handle="maya", bio="Designer & weekend potter", buttons=[], cls="") -%}
+{% macro phone(theme="classic", name="Bishal", handle="bishal", bio="Designer & weekend potter", buttons=[], cls="") -%}
 {% set t = {
   "classic": {"bg": "background:linear-gradient(180deg,#EEF3FF 0%,#FFFFFF 70%)", "text": "text-ink", "muted": "text-neutral-500", "btn": "bg-brand-500 text-white rounded-xl", "avatar": "bg-brand-100 text-brand-600"},
   "midnight": {"bg": "background:radial-gradient(120% 80% at 50% 0%,#1D2B53 0%,#0B0F19 60%)", "text": "text-white", "muted": "text-slate-400", "btn": "bg-[#7EA6FF]/15 text-white rounded-xl backdrop-blur", "avatar": "bg-white/10 text-white"},
@@ -53,10 +53,18 @@
   <div class="relative mx-auto grid max-w-7xl items-center gap-14 px-4 pb-24 pt-14 sm:px-6 lg:grid-cols-12 lg:gap-10 lg:px-8 lg:pb-32 lg:pt-20">
     <div class="animate-fade-up lg:col-span-7">
       <span class="pill">Let's make it with one click 👋</span>
+      {# A different headline on every load; the logo tile sits between the two halves. #}
+      {% set headline = [
+        ("Bio link & link shortener", "for everyone"),
+        ("Shorter links,", "bigger reach"),
+        ("One link", "for everything you share"),
+        ("Share smarter,", "track every click"),
+        ("Your whole world", "in one bio link"),
+      ]|random %}
       <h1 class="display mt-6 text-[40px] sm:text-5xl lg:text-[64px]">
-        Bio link &amp; link shortener
+        {{ headline[0] }}
         <span class="mx-1 inline-grid h-[0.9em] w-[1.25em] -translate-y-[0.06em] place-items-center rounded-xl bg-brand-500 align-middle text-white shadow-brand">{{ logo_mark("h-[0.5em] w-auto [&_path]:stroke-white") }}</span>
-        for everyone
+        {{ headline[1] }}
       </h1>
       <p class="mt-6 max-w-xl text-base leading-relaxed text-neutral-600 sm:text-lg">
         One platform to shorten links, generate QR codes, build a beautiful link-in-bio page and see exactly who's clicking, from where.
@@ -211,7 +219,7 @@
                    x-text="['','Create new link','Your short link','Customize','QR code','Performance'][step]"></div>
               <div class="flex items-center gap-2">
                 <div class="h-7 w-7 rounded-full bg-brand-100"></div>
-                <span class="hidden text-xs font-medium sm:inline">Maya</span>
+                <span class="hidden text-xs font-medium sm:inline">Bishal</span>
               </div>
             </div>
 
@@ -311,9 +319,9 @@
     <div class="relative lg:col-span-7">
       <div class="pointer-events-none absolute inset-0 -z-0 m-auto h-72 w-72 rounded-full bg-brand-100 blur-3xl"></div>
       <div class="relative flex justify-center gap-5 overflow-x-auto pb-6 [scrollbar-width:none] sm:overflow-visible">
-        {{ phone("midnight", "Leo Park", "leo.codes", "Indie dev. Shipping in public.", ["My newsletter", "GitHub projects", "Book a call"], "hidden sm:block sm:translate-y-10") }}
-        {{ phone("classic", "Maya Chen", "maya", "Designer & weekend potter", ["My portfolio", "Shop my pottery", "Latest video", "Say hello"], "") }}
-        {{ phone("sunset", "Ava Rivera", "avamusic", "New single out now 🎧", ["Listen on Spotify", "Tour dates", "Merch"], "hidden md:block md:translate-y-10") }}
+        {{ phone("midnight", "Sima", "sima.codes", "Indie dev. Shipping in public.", ["My newsletter", "GitHub projects", "Book a call"], "hidden sm:block sm:translate-y-10") }}
+        {{ phone("classic", "Bishal", "bishal", "Designer & weekend potter", ["My portfolio", "Shop my pottery", "Latest video", "Say hello"], "") }}
+        {{ phone("sunset", "Basak", "basakmusic", "New single out now 🎧", ["Listen on Spotify", "Tour dates", "Merch"], "hidden md:block md:translate-y-10") }}
       </div>
     </div>
   </div>

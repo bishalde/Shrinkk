@@ -74,3 +74,9 @@ def test_username_availability_api(client, user):
     assert client.get("/api/username-available?u=alice").json["available"] is True  # own name
     assert client.get("/api/username-available?u=admin").json["available"] is False
     assert client.get("/api/username-available?u=newname").json["available"] is True
+
+
+def test_landing_rotates_headline(client):
+    halves = ["for everyone", "bigger reach", "for everything you share", "track every click", "in one bio link"]
+    seen = {h for _ in range(40) for h in halves if h in client.get("/").get_data(as_text=True)}
+    assert len(seen) > 1

@@ -2,6 +2,8 @@
 
 Short links, QR codes and a link-in-bio page, with click and profile analytics.
 
+Live at **https://shrinkk.vercel.app**
+
 - **Short links**: custom aliases, tags, expiry, pause/resume, bulk actions, UTM builder.
 - **Bio page** at `/@username`: avatar, bio, social icons, drag-to-reorder buttons, six themes plus custom colours, fonts and button styles.
 - **Analytics**: clicks and profile views over time, countries, devices, browsers, referrers and traffic source (direct / bio / QR).
@@ -17,7 +19,7 @@ npm install && npm run build                        # builds CSS and the icon sp
 .venv/bin/python scripts/demo.py                    # http://localhost:8080
 ```
 
-The demo runs on an in-memory database seeded with sample data. Log in as `demo@shrinkk.app` / `demo12345` and see the bio page at `/@maya`. Data is lost when the server stops.
+The demo runs on an in-memory database seeded with sample data. Log in as `demo@shrinkk.app` / `demo12345` (Bishal's account). Sample bio pages: `/@bishal`, `/@sima`, `/@basak`. Data is lost when the server stops.
 
 ## Running against MongoDB
 
@@ -37,12 +39,12 @@ Users created before the revamp have no username; they're asked to pick one on t
 | `MONGO_URI`  | `mongodb://localhost:27017` | `mongomock://` gives an in-memory database     |
 | `MONGO_DB`   | `shrinkk`                   |                                                |
 | `SECRET_KEY` | dev placeholder             | **Required** in production; the app refuses to start without it |
-| `BASE_URL`   | `http://localhost:8080`     | Public origin used in short links and QR codes |
+| `BASE_URL`   | `http://localhost:8080`     | Public origin used in short links and QR codes. On Vercel it falls back to the production domain |
 
 ## Deploying to Vercel
 
 1. Import the repo in Vercel. `vercel.json` already sets the build command (`npm run build`), serves `public/` from the CDN and routes everything else to the Flask function in `api/index.py`.
-2. Add `MONGO_URI`, `MONGO_DB`, `SECRET_KEY` and `BASE_URL` in Project → Settings → Environment Variables.
+2. Add `MONGO_URI`, `MONGO_DB` and `SECRET_KEY` in Project → Settings → Environment Variables. Set `BASE_URL=https://shrinkk.vercel.app` (or your custom domain); if omitted, Vercel's production domain is used.
 3. In MongoDB Atlas, allow access from Vercel (Network Access → `0.0.0.0/0`, or Vercel's static IPs on paid plans).
 4. Run `scripts/init_db.py` once against the production database.
 
