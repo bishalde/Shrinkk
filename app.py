@@ -59,7 +59,7 @@ def _connect(uri, db_name):
 
         mongomock.gridfs.enable_gridfs_integration()
         return mongomock.MongoClient(tz_aware=True)[db_name]
-    return MongoClient(uri, tz_aware=True, serverSelectionTimeoutMS=5000)[db_name]
+    return MongoClient(uri, tz_aware=True, serverSelectionTimeoutMS=3000)[db_name]
 
 
 def _register_template_helpers(app):

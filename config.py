@@ -31,6 +31,10 @@ class Config:
         "RATELIMIT_STORAGE_URI", MONGO_URI if _is_production() else "memory://"
     )
     RATELIMIT_HEADERS_ENABLED = True
+    # If MongoDB is unreachable, fail fast and keep serving with per-instance in-memory limits.
+    RATELIMIT_STORAGE_OPTIONS = {"serverSelectionTimeoutMS": 2000, "connectTimeoutMS": 2000}
+    RATELIMIT_IN_MEMORY_FALLBACK_ENABLED = True
+    RATELIMIT_SWALLOW_ERRORS = True
 
     STATS_CACHE_SECONDS = 600
     PRODUCTION = _is_production()
