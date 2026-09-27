@@ -1,14 +1,4 @@
-{% extends "base.html" %}
-{% block title %}404{% endblock %}
-{% block body %}
-<div class="min-h-screen flex items-center justify-center bg-surface-50">
-    <div class="text-center p-8 animate-fade-up">
-        <div class="w-20 h-20 rounded-2xl bg-brand-50 border border-brand-100 flex items-center justify-center mx-auto mb-6 shadow-glow">
-            <i data-lucide="link-2-off" class="w-8 h-8 text-brand-500"></i>
-        </div>
-        <h1 class="text-2xl font-extrabold text-surface-900">Link Not Found</h1>
-        <p class="text-sm text-surface-400 mt-2 mb-8 max-w-xs mx-auto">The short link you're looking for doesn't exist or has been removed.</p>
-        <a href="/" class="px-6 py-2.5 gradient-brand text-white rounded-xl font-semibold text-sm hover:shadow-glow transition-all btn-press">Go Home</a>
-    </div>
-</div>
-{% endblock %}
+{% extends "errors/error.html" %}
+{% set code = 404 %}
+{% set title = "Page not found" %}
+{% set message = "This link doesn't exist, or it was deleted by its owner. Double-check the address and try again." %}

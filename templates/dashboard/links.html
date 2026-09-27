@@ -1,0 +1,127 @@
+{% extends "layouts/app.html" %}
+{% from "macros/ui.html" import icon, empty_state %}
+{% block title %}Links · Shrinkk{% endblock %}
+{% block page_title %}Links{% endblock %}
+{% block header_actions %}
+<button type="button" class="btn btn-primary btn-sm" @click="$dispatch('link-modal', null)">{{ icon('plus', 'icon-sm') }}<span class="hidden sm:inline">New link</span></button>
+{% endblock %}
+
+{% block content %}
+<div x-data="linksPage({{ links|tojson|forceescape }})">
+  {# Toolbar: search + tag filter #}
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+    <form method="get" class="relative flex-1" role="search">
+      <span class="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-muted">{{ icon('search', 'icon-sm') }}</span>
+      <input name="q" value="{{ search }}" class="input !pl-10" placeholder="Search by title, URL or alias" aria-label="Search links">
+      {% if active_tag %}<input type="hidden" name="tag" value="{{ active_tag }}">{% endif %}
+    </form>
+    {% if tags %}
+    <div class="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0 sm:pb-0">
+      <a href="{{ url_for('dashboard.links', q=search or None) }}" class="badge shrink-0 !rounded-full !px-3 !py-1.5 !text-xs {{ 'bg-ink text-white' if not active_tag else 'bg-white text-ink ring-1 ring-line hover:bg-cultured' }}">All</a>
+      {% for tag in tags %}
+      <a href="{{ url_for('dashboard.links', tag=tag, q=search or None) }}" class="badge shrink-0 !rounded-full !px-3 !py-1.5 !text-xs {{ 'bg-ink text-white' if tag == active_tag else 'bg-white text-ink ring-1 ring-line hover:bg-cultured' }}">#{{ tag }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  {# Bulk action bar #}
+  <form method="post" action="{{ url_for('dashboard.bulk_links') }}" x-show="selected.length" x-transition x-cloak
+        class="sticky top-20 z-20 mt-4 flex flex-wrap items-center gap-2 rounded-2xl bg-ink px-4 py-3 text-white shadow-float"
+        @submit="if ($event.submitter?.value === 'delete' && !confirm(`Delete ${selected.length} link(s)? This can't be undone.`)) $event.preventDefault()">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="return_to" value="{{ request.full_path }}">
+    <template x-for="id in selected" :key="id"><input type="hidden" name="ids" :value="id"></template>
+    <span class="mr-2 text-sm font-semibold" x-text="`${selected.length} selected`"></span>
+    <button name="action" value="activate" class="btn btn-sm bg-white/10 hover:bg-white/20">{{ icon('play', 'icon-sm') }} Activate</button>
+    <button name="action" value="deactivate" class="btn btn-sm bg-white/10 hover:bg-white/20">{{ icon('pause', 'icon-sm') }} Pause</button>
+    <button name="action" value="add_to_bio" class="btn btn-sm bg-white/10 hover:bg-white/20">{{ icon('user-round', 'icon-sm') }} Add to bio</button>
+    <div class="flex items-center gap-1">
+      <input name="tag" class="w-28 rounded-lg bg-white/10 px-3 py-2 text-[13px] text-white placeholder:text-white/50 outline-none focus:bg-white/20" placeholder="tag name" aria-label="Tag name">
+      <button name="action" value="tag" class="btn btn-sm bg-white/10 hover:bg-white/20">{{ icon('tag', 'icon-sm') }} Tag</button>
+    </div>
+    <button name="action" value="delete" class="btn btn-sm ml-auto bg-red-500 hover:bg-red-600">{{ icon('trash-2', 'icon-sm') }} Delete</button>
+    <button type="button" class="btn-icon !text-white/70 hover:!bg-white/10 hover:!text-white" @click="selected = []" aria-label="Clear selection">{{ icon('x', 'icon-sm') }}</button>
+  </form>
+
+  <div class="card mt-4 overflow-hidden">
+    {% if links %}
+    <div class="flex items-center gap-3 border-b border-line bg-cultured/60 px-4 py-2.5 sm:px-5">
+      <input type="checkbox" class="h-4 w-4 rounded accent-brand-500" :checked="selected.length === links.length" @change="toggleAll($event.target.checked)" aria-label="Select all">
+      <span class="kbd-label">{{ links|length }} link{{ 's' if links|length != 1 }}</span>
+    </div>
+    <ul class="divide-y divide-line">
+      <template x-for="link in links" :key="link.id">
+        <li class="group flex items-start gap-3 px-4 py-4 transition hover:bg-cultured/50 sm:items-center sm:px-5" :class="!link.is_active && 'opacity-60'">
+          <input type="checkbox" class="mt-1 h-4 w-4 rounded accent-brand-500 sm:mt-0" :value="link.id" x-model="selected" :aria-label="`Select ${link.display_title}`">
+          <img :src="`https://www.google.com/s2/favicons?domain=${encodeURIComponent(link.domain)}&sz=64`" alt="" class="hidden h-10 w-10 shrink-0 rounded-xl bg-cultured p-2 sm:block" loading="lazy">
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <a :href="`/dashboard/links/${link.id}`" class="truncate text-sm font-semibold hover:text-brand-500" x-text="link.display_title"></a>
+              <span x-show="link.on_profile" class="badge bg-brand-50 text-brand-600">{{ icon('user-round', 'h-3 w-3') }} Bio</span>
+              <span x-show="link.expired" class="badge bg-amber-50 text-amber-700">Expired</span>
+              <span x-show="!link.is_active" class="badge bg-neutral-100 text-neutral-600">Paused</span>
+              <template x-for="tag in link.tags" :key="tag"><span class="badge bg-cultured text-muted" x-text="`#${tag}`"></span></template>
+            </div>
+            <div class="mt-0.5 flex min-w-0 items-center gap-1.5 text-xs">
+              <button type="button" class="shrink-0 font-semibold text-brand-500 hover:underline" @click="copyText(link.short_url)" x-text="`{{ base_host }}/${link.short_code}`"></button>
+              <span class="text-neutral-300">·</span>
+              <span class="truncate text-muted" x-text="link.original_url"></span>
+            </div>
+          </div>
+          <div class="hidden w-20 text-right sm:block">
+            <div class="text-sm font-bold tabular-nums" x-text="link.clicks.toLocaleString()"></div>
+            <div class="text-[11px] text-muted">clicks</div>
+          </div>
+          <button type="button" class="toggle mt-1 sm:mt-0" :aria-checked="link.is_active.toString()" @click="toggleActive(link)" :aria-label="link.is_active ? 'Pause link' : 'Activate link'" title="Active"></button>
+          <div class="relative" x-data="{ menu: false }" @click.outside="menu = false">
+            <button type="button" class="btn-icon" @click="menu = !menu" aria-label="Link actions">{{ icon('ellipsis-vertical', 'icon-sm') }}</button>
+            <div x-show="menu" x-transition.origin.top.right x-cloak class="absolute right-0 z-10 mt-1 w-48 rounded-xl border border-line bg-white p-1.5 shadow-float">
+              <button type="button" class="nav-item !py-2 w-full" @click="menu = false; copyText(link.short_url)">{{ icon('copy', 'icon-sm') }} Copy link</button>
+              <button type="button" class="nav-item !py-2 w-full" @click="menu = false; $dispatch('link-modal', link)">{{ icon('pencil', 'icon-sm') }} Edit</button>
+              <a :href="`/dashboard/links/${link.id}`" class="nav-item !py-2">{{ icon('chart-column', 'icon-sm') }} Analytics & QR</a>
+              <a :href="link.original_url" target="_blank" rel="noopener noreferrer" class="nav-item !py-2">{{ icon('external-link', 'icon-sm') }} Open destination</a>
+              <form method="post" :action="`/dashboard/links/${link.id}/delete`" @submit="if (!confirm('Delete this link? This can\'t be undone.')) $event.preventDefault()">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="nav-item !py-2 w-full !text-red-600 hover:!bg-red-50">{{ icon('trash-2', 'icon-sm') }} Delete</button>
+              </form>
+            </div>
+          </div>
+        </li>
+      </template>
+    </ul>
+    {% elif search or active_tag %}
+      {{ empty_state("search", "No matching links", "Try a different search or tag.") }}
+    {% else %}
+      {% call empty_state("link", "Create your first link", "Shorten a URL, give it a memorable alias, and track every click.") %}
+        <button type="button" class="btn btn-primary" @click="$dispatch('link-modal', null)">{{ icon('plus', 'icon-sm') }} New link</button>
+      {% endcall %}
+    {% endif %}
+  </div>
+</div>
+
+{% include "partials/link_modal.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function linksPage(links) {
+    return {
+      links,
+      selected: [],
+      toggleAll(on) { this.selected = on ? this.links.map((l) => l.id) : []; },
+      async toggleActive(link) {
+        const next = !link.is_active;
+        link.is_active = next;
+        try {
+          await api(`/api/links/${link.id}`, { method: "PATCH", json: { is_active: next } });
+          toast(next ? "Link activated" : "Link paused");
+        } catch (e) {
+          link.is_active = !next;
+          toast(e.message, "error");
+        }
+      },
+    };
+  }
+</script>
+{% endblock %}

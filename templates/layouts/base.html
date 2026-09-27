@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Shrinkk — Bio link & link shortener{% endblock %}</title>
+  <meta name="description" content="{% block description %}Short links, QR codes, a link-in-bio page and analytics, all in one place.{% endblock %}">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta name="theme-color" content="#1662FF">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
+  {% block meta %}{% endblock %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {% block head %}{% endblock %}
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
+</head>
+<body class="{% block body_class %}min-h-screen{% endblock %}" {% block body_attrs %}{% endblock %}>
+  {% block body %}{% endblock %}
+  {% include "partials/toasts.html" %}
+  {% block scripts %}{% endblock %}
+</body>
+</html>

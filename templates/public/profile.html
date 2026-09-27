@@ -1,0 +1,85 @@
+{% extends "layouts/base.html" %}
+{% from "macros/ui.html" import icon, logo_mark %}
+{% set name = profile.display_name or "@" ~ profile.username %}
+{% set summary = profile.bio or "Check out " ~ name ~ "'s links on Shrinkk." %}
+{% block title %}{{ name }} (@{{ profile.username }}) · Shrinkk{% endblock %}
+{% block description %}{{ summary }}{% endblock %}
+{% block meta %}
+<link rel="canonical" href="{{ profile_url }}">
+<meta property="og:type" content="profile">
+<meta property="og:title" content="{{ name }}">
+<meta property="og:description" content="{{ summary }}">
+<meta property="og:url" content="{{ profile_url }}">
+{% if avatar_url %}<meta property="og:image" content="{{ base_url }}{{ avatar_url }}">{% endif %}
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="{{ name }}">
+<meta name="twitter:description" content="{{ summary }}">
+{% endblock %}
+{% block head %}
+{% if look.font != "sans" %}<link href="https://fonts.googleapis.com/css2?family={{ look.google_font }}&display=swap" rel="stylesheet">{% endif %}
+{% endblock %}
+{% block body_class %}bio min-h-screen{% endblock %}
+{% block body_attrs %}style="{{ look.css }}"{% endblock %}
+
+{% block body %}
+<div class="min-h-screen" x-data="{ qr: false }">
+  <div class="mx-auto flex min-h-screen w-full max-w-[580px] flex-col px-5 pt-6 pb-8">
+    <div class="flex justify-end gap-2">
+      {% if is_owner %}
+      <a href="{{ url_for('dashboard.bio') }}" class="bio-btn bio-btn--soft !min-h-0 !w-auto !px-4 !py-2 text-sm">{{ icon('pencil', 'icon-sm') }} Edit page</a>
+      {% endif %}
+      <button type="button" class="bio-btn bio-btn--soft !min-h-0 !w-auto !px-3 !py-2" aria-label="Share"
+              @click="navigator.share ? navigator.share({ title: {{ name|tojson|forceescape }}, url: {{ profile_url|tojson|forceescape }} }).catch(() => {}) : (qr = true)">{{ icon('share-2', 'icon-sm') }}</button>
+      <button type="button" class="bio-btn bio-btn--soft !min-h-0 !w-auto !px-3 !py-2" aria-label="Show QR code" @click="qr = true">{{ icon('qr-code', 'icon-sm') }}</button>
+    </div>
+
+    <header class="mt-6 text-center">
+      {% if avatar_url %}
+      <img src="{{ avatar_url }}" alt="{{ name }}" class="mx-auto h-24 w-24 rounded-full object-cover shadow-lg sm:h-28 sm:w-28">
+      {% else %}
+      <div class="bio-avatar mx-auto grid h-24 w-24 place-items-center rounded-full text-4xl font-bold uppercase sm:h-28 sm:w-28">{{ name.lstrip('@')[:1] }}</div>
+      {% endif %}
+      <h1 class="mt-4 text-2xl font-bold tracking-tight">{{ name }}</h1>
+      {% if profile.bio %}<p class="bio-muted mx-auto mt-2 max-w-md leading-relaxed">{{ profile.bio }}</p>{% endif %}
+      {% if socials %}
+      <nav class="mt-4 flex flex-wrap justify-center gap-1" aria-label="Social profiles">
+        {% for s in socials %}
+        <a href="{{ s.url }}" class="bio-social" target="_blank" rel="noopener me" aria-label="{{ s.label }}">{{ icon(s.icon, 'icon-lg') }}</a>
+        {% endfor %}
+      </nav>
+      {% endif %}
+    </header>
+
+    <main class="mt-8 flex-1 space-y-3.5">
+      {% for link in links %}
+      <a href="/{{ link.short_code }}?src=bio" class="bio-btn bio-btn--{{ look.style }} animate-fade-up" style="animation-delay: {{ loop.index0 * 50 }}ms" rel="noopener">
+        {{ link.title or (link.original_url|domain) }}
+      </a>
+      {% else %}
+      <p class="bio-muted py-10 text-center">No links here yet.</p>
+      {% endfor %}
+    </main>
+
+    <footer class="mt-12 text-center">
+      <a href="/" class="bio-muted inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider hover:opacity-80">
+        {{ logo_mark("h-4 w-auto [&_path]:stroke-current") }} Made with Shrinkk
+      </a>
+    </footer>
+  </div>
+
+  {# QR / share sheet #}
+  <div x-show="qr" x-cloak class="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center" @keydown.escape.window="qr = false" role="dialog" aria-modal="true" aria-label="Share this page">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="qr = false" x-show="qr" x-transition.opacity></div>
+    <div class="relative w-full max-w-sm rounded-3xl bg-white p-6 text-center text-ink shadow-float" style="font-family: inherit" x-show="qr" x-transition>
+      <button type="button" class="btn-icon absolute top-3 right-3" @click="qr = false" aria-label="Close">{{ icon('x') }}</button>
+      <h2 class="text-lg font-bold">Share this page</h2>
+      <img src="{{ url_for('public.profile_qr', username=profile.username, fmt='svg') }}" alt="QR code for this page" class="mx-auto mt-4 h-52 w-52" loading="lazy">
+      <div class="mt-4 flex items-center gap-2 rounded-xl bg-cultured p-1.5 pl-4">
+        <span class="flex-1 truncate text-left text-sm font-medium">{{ profile_url.split('://', 1)[-1] }}</span>
+        <button type="button" class="btn btn-primary btn-sm" @click="copyText({{ profile_url|tojson|forceescape }}, 'Link copied')">{{ icon('copy', 'icon-sm') }} Copy</button>
+      </div>
+      <a href="{{ url_for('public.profile_qr', username=profile.username, fmt='png', dl=1) }}" class="btn btn-ghost btn-sm mt-3">{{ icon('download', 'icon-sm') }} Download QR</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

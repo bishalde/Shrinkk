@@ -1,0 +1,127 @@
+{% from "macros/ui.html" import icon %}
+{#
+  Create/edit link modal. Open with:
+    $dispatch('link-modal', null)        -> create
+    $dispatch('link-modal', linkObject)  -> edit (serialized link)
+#}
+<div x-data="linkModal()" @link-modal.window="open($event.detail)" @keydown.escape.window="show = false">
+  <div x-show="show" x-cloak class="fixed inset-0 z-[60] flex items-end justify-center sm:items-center sm:p-4" role="dialog" aria-modal="true" aria-labelledby="link-modal-title">
+    <div x-show="show" x-transition.opacity class="absolute inset-0 bg-ink/50 backdrop-blur-sm" @click="show = false"></div>
+    <form x-show="show" x-transition:enter="transition duration-200 ease-out" x-transition:enter-start="translate-y-4 opacity-0 sm:scale-95" x-transition:enter-end="translate-y-0 opacity-100 sm:scale-100"
+          method="post" :action="action" class="relative max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-white p-6 shadow-float sm:max-w-lg sm:rounded-3xl sm:p-7" @submit="busy = true">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="return_to" value="{{ request.full_path }}">
+
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 id="link-modal-title" class="text-lg font-bold" x-text="editing ? 'Edit link' : 'Create new link'"></h2>
+          <p class="text-sm text-muted" x-text="editing ? 'Changes apply immediately.' : 'Shorten, customize and track a link.'"></p>
+        </div>
+        <button type="button" class="btn-icon -mt-1 -mr-2" @click="show = false" aria-label="Close">{{ icon('x') }}</button>
+      </div>
+
+      <div class="mt-6 space-y-4">
+        <div>
+          <label class="label" for="lm-url">Destination URL</label>
+          <input id="lm-url" name="original_url" x-model="form.original_url" x-ref="url" class="input" placeholder="https://example.com/very/long/link" required>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="label" for="lm-title">Title <span class="font-normal text-muted">(optional)</span></label>
+            <input id="lm-title" name="title" x-model="form.title" class="input" placeholder="My portfolio" maxlength="100">
+          </div>
+          <div>
+            <label class="label" for="lm-alias">Custom alias <span class="font-normal text-muted">(optional)</span></label>
+            <div class="flex overflow-hidden rounded-xl border border-line bg-white focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/15">
+              <span class="flex items-center bg-cultured pr-0.5 pl-3 text-sm text-muted">/</span>
+              <input id="lm-alias" name="custom_alias" x-model="form.custom_alias" class="w-full min-w-0 bg-transparent py-2.5 pr-3 text-sm outline-none" placeholder="launch" maxlength="30" pattern="[A-Za-z0-9_\-]{3,30}" title="3–30 letters, numbers, hyphens or underscores">
+            </div>
+          </div>
+        </div>
+        <p x-show="editing && form.custom_alias && form.custom_alias !== original.short_code" x-cloak class="-mt-2 flex items-center gap-1.5 text-xs font-medium text-amber-700">
+          {{ icon('triangle-alert', 'icon-sm') }} The old short link will stop working.
+        </p>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="label" for="lm-tags">Tags</label>
+            <input id="lm-tags" name="tags" x-model="form.tags" class="input" placeholder="social, launch">
+            <p class="hint">Comma separated</p>
+          </div>
+          <div>
+            <label class="label" for="lm-exp">Expires on</label>
+            <input id="lm-exp" name="expires_on" type="date" x-model="form.expires_on" :min="today" class="input">
+            <p class="hint">Leave empty to never expire</p>
+          </div>
+        </div>
+
+        <label class="flex cursor-pointer items-center justify-between gap-4 rounded-xl border border-line px-4 py-3">
+          <span>
+            <span class="block text-sm font-semibold">Show on my bio page</span>
+            <span class="block text-xs text-muted">Adds a button to {{ base_host }}/@{{ current_user.username }}</span>
+          </span>
+          <input type="checkbox" name="on_profile" value="on" x-model="form.on_profile" class="sr-only">
+          <span class="toggle" :aria-checked="form.on_profile.toString()"></span>
+        </label>
+
+        {# UTM builder: composes utm_* params onto the destination URL #}
+        <div class="rounded-xl border border-line" x-data="{ utmOpen: false, utm: { source: '', medium: '', campaign: '' } }">
+          <button type="button" class="flex w-full items-center justify-between px-4 py-3 text-sm font-semibold" @click="utmOpen = !utmOpen" :aria-expanded="utmOpen">
+            <span class="flex items-center gap-2">{{ icon('target', 'icon-sm text-brand-500') }} UTM builder</span>
+            <span class="transition" :class="utmOpen && 'rotate-180'">{{ icon('chevron-down', 'icon-sm text-muted') }}</span>
+          </button>
+          <div x-show="utmOpen" x-cloak class="space-y-3 border-t border-line px-4 pt-3 pb-4">
+            <div class="grid gap-3 sm:grid-cols-3">
+              <input x-model="utm.source" class="input !py-2" placeholder="source (e.g. twitter)" aria-label="UTM source">
+              <input x-model="utm.medium" class="input !py-2" placeholder="medium (e.g. social)" aria-label="UTM medium">
+              <input x-model="utm.campaign" class="input !py-2" placeholder="campaign" aria-label="UTM campaign">
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" @click="applyUtm(utm)">{{ icon('plus', 'icon-sm') }} Add to URL</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-7 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        <button type="button" class="btn btn-ghost" @click="show = false">Cancel</button>
+        <button type="submit" class="btn btn-primary" :disabled="busy">
+          <span x-show="busy" x-cloak>{{ icon('loader-circle', 'icon-sm animate-spin') }}</span>
+          <span x-text="editing ? 'Save changes' : 'Create link'"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function linkModal() {
+    const blank = { original_url: "", title: "", custom_alias: "", tags: "", expires_on: "", on_profile: false };
+    return {
+      show: false, busy: false, editing: false, original: {}, form: { ...blank },
+      today: new Date().toISOString().slice(0, 10),
+      action: "{{ url_for('dashboard.create_link_form') }}",
+      open(link) {
+        this.busy = false;
+        this.editing = !!link;
+        this.original = link || {};
+        this.form = link
+          ? { original_url: link.original_url, title: link.title, custom_alias: link.short_code,
+              tags: link.tags.join(", "), expires_on: link.expires_on, on_profile: link.on_profile }
+          : { ...blank };
+        this.action = link ? `/dashboard/links/${link.id}` : "{{ url_for('dashboard.create_link_form') }}";
+        this.show = true;
+        this.$nextTick(() => this.$refs.url.focus());
+      },
+      applyUtm(utm) {
+        let url;
+        try { url = new URL(this.form.original_url.includes("://") ? this.form.original_url : `https://${this.form.original_url}`); }
+        catch (_) { toast("Enter a destination URL first", "error"); return; }
+        for (const [k, v] of Object.entries(utm)) {
+          if (v.trim()) url.searchParams.set(`utm_${k}`, v.trim());
+        }
+        this.form.original_url = url.toString();
+        toast("UTM parameters added");
+      },
+    };
+  }
+</script>

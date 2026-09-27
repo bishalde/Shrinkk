@@ -1,0 +1,81 @@
+{% extends "layouts/app.html" %}
+{% from "macros/ui.html" import icon %}
+{% block title %}Settings · Shrinkk{% endblock %}
+{% block page_title %}Settings{% endblock %}
+
+{% macro section(title, text) -%}
+<section class="card grid gap-6 p-5 sm:p-6 lg:grid-cols-[260px_1fr]">
+  <div>
+    <h3 class="text-[15px] font-bold uppercase tracking-tight">{{ title }}</h3>
+    <p class="mt-1 text-sm text-muted">{{ text }}</p>
+  </div>
+  <div class="max-w-lg">{{ caller() }}</div>
+</section>
+{%- endmacro %}
+
+{% block content %}
+<div class="mx-auto max-w-5xl space-y-6">
+  {% call section("Username", "Your bio page address. Changing it breaks links to your old address.") %}
+  <form method="post" action="{{ url_for('dashboard.change_username') }}" class="space-y-4"
+        x-data="usernameField({{ current_user.username|tojson|forceescape }}, {{ current_user.username|tojson|forceescape }})">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div>
+      <label for="s-username" class="label">Username</label>
+      <div class="flex overflow-hidden rounded-xl border border-line bg-white focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/15">
+        <span class="flex items-center bg-cultured pr-1 pl-4 text-sm text-muted">{{ base_host }}/@</span>
+        <input id="s-username" name="username" x-model="username" @input="check()" class="w-full min-w-0 bg-transparent py-2.5 pr-4 text-sm outline-none" maxlength="30" required autocapitalize="off" spellcheck="false">
+      </div>
+      <p class="mt-1.5 text-xs font-medium" x-show="status !== 'idle'" x-cloak
+         :class="{ 'text-emerald-600': status === 'ok', 'text-red-600': status === 'bad', 'text-muted': status === 'checking' }"
+         x-text="status === 'checking' ? 'Checking…' : message"></p>
+    </div>
+    <button class="btn btn-primary btn-sm" :disabled="status !== 'ok'">Save username</button>
+  </form>
+  {% endcall %}
+
+  {% call section("Email", "Used to log in. Confirm with your current password.") %}
+  <form method="post" action="{{ url_for('dashboard.change_email') }}" class="space-y-4">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div>
+      <label for="s-email" class="label">Email</label>
+      <input id="s-email" name="email" type="email" value="{{ current_user.email }}" class="input" required autocomplete="email">
+    </div>
+    <div>
+      <label for="s-email-pw" class="label">Current password</label>
+      <input id="s-email-pw" name="password" type="password" class="input" required autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary btn-sm">Update email</button>
+  </form>
+  {% endcall %}
+
+  {% call section("Password", "Use at least 8 characters.") %}
+  <form method="post" action="{{ url_for('dashboard.change_password') }}" class="space-y-4">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div>
+      <label for="s-cur" class="label">Current password</label>
+      <input id="s-cur" name="current_password" type="password" class="input" required autocomplete="current-password">
+    </div>
+    <div>
+      <label for="s-new" class="label">New password</label>
+      <input id="s-new" name="new_password" type="password" class="input" required minlength="8" autocomplete="new-password">
+    </div>
+    <button class="btn btn-primary btn-sm">Change password</button>
+  </form>
+  {% endcall %}
+
+  <section class="card grid gap-6 border-red-200 p-5 sm:p-6 lg:grid-cols-[260px_1fr]" x-data="{ confirmText: '' }">
+    <div>
+      <h3 class="text-[15px] font-bold uppercase tracking-tight text-red-600">Delete account</h3>
+      <p class="mt-1 text-sm text-muted">Permanently deletes your bio page, all links, their analytics, and your photo. This can't be undone.</p>
+    </div>
+    <form method="post" action="{{ url_for('dashboard.delete_account') }}" class="max-w-lg space-y-4">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div>
+        <label for="s-confirm" class="label">Type <span class="font-mono text-red-600">{{ current_user.username }}</span> to confirm</label>
+        <input id="s-confirm" name="confirm" x-model="confirmText" class="input" autocomplete="off" autocapitalize="off" spellcheck="false">
+      </div>
+      <button class="btn btn-danger btn-sm" :disabled="confirmText.trim().toLowerCase() !== {{ current_user.username|tojson|forceescape }}">{{ icon('trash-2', 'icon-sm') }} Delete my account</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

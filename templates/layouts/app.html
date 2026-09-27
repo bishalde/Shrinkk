@@ -1,0 +1,75 @@
+{% extends "layouts/base.html" %}
+{% from "macros/ui.html" import icon, logo, avatar %}
+{% set nav = [
+  ("dashboard.home", "Dashboard", "layout-dashboard"),
+  ("dashboard.links", "Links", "link"),
+  ("dashboard.bio", "Bio page", "user-round"),
+  ("dashboard.analytics", "Analytics", "chart-column"),
+  ("dashboard.settings", "Settings", "settings"),
+] %}
+{% block body_class %}min-h-screen bg-cultured{% endblock %}
+{% block body %}
+<div x-data="{ drawer: false }" @keydown.escape.window="drawer = false" class="min-h-screen lg:pl-64">
+
+  {# Sidebar (fixed on desktop, drawer on mobile) #}
+  <div x-show="drawer" x-transition.opacity x-cloak class="fixed inset-0 z-40 bg-ink/40 lg:hidden" @click="drawer = false"></div>
+  <aside class="fixed inset-y-0 left-0 z-50 flex w-64 -translate-x-full flex-col border-r border-line bg-white px-4 py-5 transition-transform duration-200 lg:translate-x-0"
+         :class="drawer && '!translate-x-0'">
+    <div class="flex items-center justify-between px-2">
+      {{ logo(url_for('dashboard.home')) }}
+      <button class="btn-icon lg:hidden" @click="drawer = false" aria-label="Close menu">{{ icon('x') }}</button>
+    </div>
+    <nav class="mt-8 space-y-1" aria-label="Main">
+      {% for endpoint, label, icon_name in nav %}
+      <a href="{{ url_for(endpoint) }}" class="nav-item" {% if request.endpoint == endpoint or (endpoint == 'dashboard.links' and request.endpoint == 'dashboard.link_detail') %}aria-current="page"{% endif %}>
+        {{ icon(icon_name) }} {{ label }}
+      </a>
+      {% endfor %}
+    </nav>
+
+    <div class="mt-auto rounded-2xl bg-brand-50 p-4">
+      <div class="text-sm font-semibold">Your bio page</div>
+      <p class="mt-1 truncate text-xs text-muted">{{ base_host }}/@{{ current_user.username }}</p>
+      <div class="mt-3 flex gap-2">
+        <a href="/@{{ current_user.username }}" target="_blank" rel="noopener" class="btn btn-primary btn-sm flex-1">{{ icon('external-link', 'icon-sm') }} View</a>
+        <button type="button" class="btn btn-light btn-sm" @click="copyText('{{ base_url }}/@{{ current_user.username }}', 'Bio page link copied')" aria-label="Copy bio page link">{{ icon('copy', 'icon-sm') }}</button>
+      </div>
+    </div>
+  </aside>
+
+  {# Top bar #}
+  <header class="sticky top-0 z-30 border-b border-line bg-white/85 backdrop-blur-md">
+    <div class="flex h-16 items-center gap-3 px-4 sm:px-6 lg:px-8">
+      <button class="btn-icon -ml-2 lg:hidden" @click="drawer = true" aria-label="Open menu">{{ icon('menu') }}</button>
+      <h1 class="truncate text-[15px] font-bold uppercase tracking-tight">{% block page_title %}Dashboard{% endblock %}</h1>
+      <div class="ml-auto flex items-center gap-2">
+        {% block header_actions %}{% endblock %}
+        <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+          <button class="flex items-center gap-2 rounded-full p-1 pr-2 transition hover:bg-cultured" @click="open = !open" :aria-expanded="open" aria-haspopup="menu">
+            {{ avatar(current_user, "h-8 w-8 text-sm") }}
+            <span class="hidden max-w-[140px] truncate text-sm font-semibold sm:block">{{ current_user.display_name or current_user.username }}</span>
+            {{ icon('chevron-down', 'icon-sm text-muted') }}
+          </button>
+          <div x-show="open" x-transition.origin.top.right x-cloak class="absolute right-0 mt-2 w-60 rounded-xl border border-line bg-white p-1.5 shadow-float" role="menu">
+            <div class="px-3 py-2">
+              <div class="truncate text-sm font-semibold">@{{ current_user.username }}</div>
+              <div class="truncate text-xs text-muted">{{ current_user.email }}</div>
+            </div>
+            <div class="my-1 border-t border-line"></div>
+            <a href="/@{{ current_user.username }}" target="_blank" rel="noopener" class="nav-item !py-2" role="menuitem">{{ icon('external-link', 'icon-sm') }} View bio page</a>
+            <a href="{{ url_for('dashboard.settings') }}" class="nav-item !py-2" role="menuitem">{{ icon('settings', 'icon-sm') }} Settings</a>
+            <form method="post" action="{{ url_for('auth.logout') }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="nav-item !py-2 w-full" role="menuitem">{{ icon('log-out', 'icon-sm') }} Log out</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

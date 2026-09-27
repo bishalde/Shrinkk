@@ -1,0 +1,17 @@
+{
+  "name": "shrinkk",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:icons": "node scripts/build-icons.mjs",
+    "build:css": "tailwindcss -i assets/app.css -o public/static/css/app.css --minify",
+    "build": "npm run build:icons && npm run build:css",
+    "dev:css": "tailwindcss -i assets/app.css -o public/static/css/app.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.0",
+    "tailwindcss": "^4.1.0",
+    "lucide-static": "^0.460.0",
+    "simple-icons": "^13.0.0"
+  }
+}

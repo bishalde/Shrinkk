@@ -1,138 +1,115 @@
-from flask import Flask, redirect, render_template, session, request, send_file, abort
-from flask_cors import CORS
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
+import os
+from datetime import datetime, timezone
+
+from flask import Flask, render_template, request
 from pymongo import MongoClient
+
 from config import Config
+from extensions import csrf, limiter
+from models import Repos
+from utils.helpers import current_user
 
-from models.user_model import UserModel
-from models.link_model import LinkModel
-from models.analytics_model import AnalyticsModel
-
-from routes.auth_routes import auth_bp, init_auth_routes
-from routes.link_routes import link_bp, init_link_routes
-from routes.analytics_routes import analytics_bp, init_analytics_routes
-
-from services.analytics import parse_request_data
-from services.qr_generator import generate_qr
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-def create_app():
-    app = Flask(__name__)
+def create_app(config_overrides=None, db=None):
+    # Static files live in public/ so Vercel serves them from its CDN; Flask serves them locally.
+    app = Flask(
+        __name__,
+        static_folder=os.path.join(BASE_DIR, "public", "static"),
+        static_url_path="/static",
+    )
     app.config.from_object(Config)
+    app.config.update(config_overrides or {})
 
-    CORS(app)
-    limiter = Limiter(get_remote_address, app=app, default_limits=["200 per minute"])
+    if app.config["PRODUCTION"] and app.config["SECRET_KEY"] == "dev-insecure-change-me":
+        raise RuntimeError("Set SECRET_KEY in the environment before running in production.")
 
-    # MongoDB
-    client = MongoClient(app.config["MONGO_URI"])
-    db = client.shrinkk
+    if db is None:
+        db = _connect(app.config["MONGO_URI"], app.config["MONGO_DB"])
+    app.extensions["repos"] = Repos.from_db(db)
 
-    # Models
-    user_model = UserModel(db)
-    link_model = LinkModel(db)
-    analytics_model = AnalyticsModel(db)
+    csrf.init_app(app)
+    limiter.init_app(app)
 
-    # Init and register blueprints
-    init_auth_routes(user_model)
-    init_link_routes(link_model)
-    init_analytics_routes(analytics_model, link_model)
+    from routes.api import api_bp
+    from routes.auth_routes import auth_bp
+    from routes.dashboard import dashboard_bp
+    from routes.pages import pages_bp
+    from routes.public import public_bp
 
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(link_bp)
-    app.register_blueprint(analytics_bp)
+    for bp in (pages_bp, auth_bp, dashboard_bp, api_bp, public_bp):
+        app.register_blueprint(bp)
 
-    # --- Page routes ---
-
-    @app.route("/")
-    def landing():
-        if "user_id" in session:
-            return redirect("/dashboard")
-        return render_template("landing.html")
-
-    @app.route("/dashboard")
-    def dashboard():
-        if "user_id" not in session:
-            return redirect("/login")
-        links = link_model.find_by_user(session["user_id"], request.args.get("search"))
-        total_clicks = sum(l["clicks"] for l in links)
-        return render_template(
-            "dashboard.html",
-            links=links,
-            total_links=len(links),
-            total_clicks=total_clicks,
-            base_url=app.config["BASE_URL"],
-            email=session.get("email"),
-        )
-
-    @app.route("/dashboard/link/<link_id>")
-    def link_detail(link_id):
-        if "user_id" not in session:
-            return redirect("/login")
-        link = link_model.find_by_id(link_id)
-        if not link or str(link["user_id"]) != session["user_id"]:
-            abort(404)
-        stats = analytics_model.get_stats(link_id)
-        return render_template(
-            "link_detail.html",
-            link=link,
-            stats=stats,
-            base_url=app.config["BASE_URL"],
-            email=session.get("email"),
-        )
-
-    # --- QR code endpoint ---
-
-    @app.route("/qr/<short_code>")
-    def qr_code(short_code):
-        link = link_model.find_by_short_code(short_code)
-        if not link:
-            abort(404)
-        url = f"{app.config['BASE_URL']}/{short_code}"
-        buffer = generate_qr(url)
-        return send_file(buffer, mimetype="image/png", download_name=f"qr-{short_code}.png")
-
-    # --- Redirect handler ---
-
-    @app.route("/<short_code>")
-    @limiter.limit("60 per minute")
-    def redirect_short(short_code):
-        # Skip static-like paths
-        if short_code in ("favicon.ico", "robots.txt"):
-            abort(404)
-
-        link = link_model.find_by_short_code(short_code)
-        if not link:
-            return render_template("errors/404.html"), 404
-
-        if link_model.is_expired(link):
-            return render_template("errors/expired.html", link=link), 410
-
-        # Log analytics
-        data = parse_request_data(request)
-        analytics_model.log_click(
-            link_id=str(link["_id"]),
-            ip=data["ip"],
-            country=data["country"],
-            city=data["city"],
-            device=data["device"],
-            browser=data["browser"],
-            os=data["os"],
-            referrer=data["referrer"],
-        )
-        link_model.increment_clicks(str(link["_id"]))
-
-        return redirect(link["original_url"], code=302)
-
-    # --- Error handlers ---
-
-    @app.errorhandler(404)
-    def not_found(e):
-        return render_template("errors/404.html"), 404
-
+    _register_template_helpers(app)
+    _register_error_handlers(app)
     return app
 
 
+def _connect(uri, db_name):
+    if uri.startswith("mongomock://"):
+        # In-memory database for local development without MongoDB (data is lost on restart).
+        import mongomock
+        import mongomock.gridfs
+
+        mongomock.gridfs.enable_gridfs_integration()
+        return mongomock.MongoClient(tz_aware=True)[db_name]
+    return MongoClient(uri, tz_aware=True, serverSelectionTimeoutMS=5000)[db_name]
+
+
+def _register_template_helpers(app):
+    from utils.formatting import register_filters
+
+    register_filters(app)
+
+    @app.context_processor
+    def inject_globals():
+        return {
+            "current_user": current_user(),
+            "base_url": app.config["BASE_URL"],
+            "base_host": app.config["BASE_URL"].split("://", 1)[-1],
+            "now_year": datetime.now(timezone.utc).year,
+        }
+
+
+def _register_error_handlers(app):
+    from flask import jsonify
+    from flask_wtf.csrf import CSRFError
+
+    def wants_json():
+        return request.path.startswith("/api/") or request.is_json
+
+    @app.errorhandler(404)
+    def not_found(_e):
+        if wants_json():
+            return jsonify({"error": "Not found"}), 404
+        return render_template("errors/404.html"), 404
+
+    @app.errorhandler(413)
+    def too_large(_e):
+        return jsonify({"error": "That file is too large."}), 413
+
+    @app.errorhandler(429)
+    def rate_limited(_e):
+        if wants_json():
+            return jsonify({"error": "Too many requests. Try again in a minute."}), 429
+        return render_template("errors/error.html", code=429, title="Slow down",
+                               message="Too many requests. Try again in a minute."), 429
+
+    @app.errorhandler(CSRFError)
+    def csrf_failed(_e):
+        if wants_json():
+            return jsonify({"error": "Your session expired. Refresh the page and try again."}), 400
+        return render_template("errors/error.html", code=400, title="Session expired",
+                               message="Refresh the page and try again."), 400
+
+    @app.errorhandler(500)
+    def server_error(_e):
+        if wants_json():
+            return jsonify({"error": "Something went wrong."}), 500
+        return render_template("errors/error.html", code=500, title="Something went wrong",
+                               message="We hit an unexpected error. Please try again."), 500
+
+
 if __name__ == "__main__":
-    app = create_app()
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    create_app().run(host="0.0.0.0", port=int(os.getenv("PORT", 8080)), debug=True)

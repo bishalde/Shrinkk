@@ -1,0 +1,42 @@
+{% extends "layouts/base.html" %}
+{% from "macros/ui.html" import icon, logo, logo_mark %}
+{% block body %}
+<div class="grid min-h-screen lg:grid-cols-[1fr_minmax(0,560px)] xl:grid-cols-2">
+  <main class="flex flex-col px-5 py-6 sm:px-10">
+    <div>{{ logo() }}</div>
+    <div class="mx-auto flex w-full max-w-[400px] flex-1 flex-col justify-center py-10">
+      {% block form %}{% endblock %}
+    </div>
+    <p class="text-center text-xs text-muted">© 2026 Shrinkk · Short links, bio pages & QR codes</p>
+  </main>
+
+  <aside class="brand-pattern relative hidden overflow-hidden text-white lg:flex lg:flex-col lg:justify-between lg:p-12">
+    <div class="pointer-events-none absolute -top-16 -right-24 text-white/10">{{ logo_mark("h-[360px] w-auto") }}</div>
+    <div class="relative">
+      <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-medium backdrop-blur">{{ icon('sparkles', 'icon-sm') }} One link for everything</span>
+      <h2 class="display mt-6 max-w-md text-4xl xl:text-5xl">{% block aside_title %}Your links, your page, your data.{% endblock %}</h2>
+      <p class="mt-4 max-w-sm text-white/80">Shorten links, generate QR codes and share a beautiful bio page at <span class="font-semibold text-white">{{ base_host }}/@you</span>.</p>
+    </div>
+
+    {# Mini bio-page preview #}
+    <div class="relative mx-auto mt-10 w-[270px] rounded-[2.2rem] border-[6px] border-ink bg-ink shadow-float">
+      <div class="bio overflow-hidden rounded-[1.8rem] px-5 pt-10 pb-8 text-center"
+           style="--bio-bg:linear-gradient(180deg,#EEF3FF 0%,#FFFFFF 70%);--bio-text:#101010;--bio-muted:#5B6270;--bio-btn-bg:#1662FF;--bio-btn-text:#fff;--bio-radius:14px;--bio-font:inherit">
+        <div class="mx-auto grid h-16 w-16 place-items-center rounded-full bg-brand-500 text-xl font-bold text-white">A</div>
+        <div class="mt-3 font-bold">Alex Rivera</div>
+        <div class="bio-muted text-xs">Designer · Creator · Coffee</div>
+        <div class="mt-3 flex justify-center gap-1">
+          <span class="bio-social">{{ icon('brand-instagram', 'icon-sm') }}</span>
+          <span class="bio-social">{{ icon('brand-youtube', 'icon-sm') }}</span>
+          <span class="bio-social">{{ icon('brand-github', 'icon-sm') }}</span>
+        </div>
+        <div class="mt-4 space-y-2.5 text-sm">
+          <div class="bio-btn bio-btn--fill !min-h-11 !py-2.5">My portfolio</div>
+          <div class="bio-btn bio-btn--fill !min-h-11 !py-2.5">Latest video</div>
+          <div class="bio-btn bio-btn--fill !min-h-11 !py-2.5">Book a call</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+{% endblock %}

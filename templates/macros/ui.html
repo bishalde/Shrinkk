@@ -1,0 +1,88 @@
+{% macro icon(name, cls="icon") -%}
+<svg class="{{ cls }}" aria-hidden="true"><use href="{{ url_for('static', filename='icons.svg') }}#i-{{ name }}"></use></svg>
+{%- endmacro %}
+
+{% macro logo_mark(cls="h-7 w-auto") -%}
+<svg class="{{ cls }}" viewBox="0 0 44 24" fill="none" aria-hidden="true">
+  <path d="M19 4.5h-6.5a7.5 7.5 0 0 0 0 15H16" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M25 19.5h6.5a7.5 7.5 0 0 0 0-15H28" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M15.5 19.5 28.5 4.5" stroke="#1662FF" stroke-width="4.5" stroke-linecap="round"/>
+</svg>
+{%- endmacro %}
+
+{% macro logo(href="/", dark=False) -%}
+<a href="{{ href }}" class="group inline-flex items-center gap-2.5 {{ 'text-white' if dark else 'text-ink' }}" aria-label="Shrinkk home">
+  {{ logo_mark("h-7 w-auto transition-transform group-hover:-rotate-6") }}
+  <span class="text-[19px] font-extrabold uppercase tracking-tight">Shrinkk</span>
+</a>
+{%- endmacro %}
+
+{% macro stat_tile(label, value, icon_name, sub=None, accent=False) -%}
+<div class="card flex items-start justify-between gap-4 p-5">
+  <div class="min-w-0">
+    <div class="text-[13px] font-medium text-muted">{{ label }}</div>
+    <div class="mt-1.5 text-[28px] font-bold leading-none tracking-tight">{{ value }}</div>
+    {% if sub %}<div class="mt-2 text-xs text-muted">{{ sub }}</div>{% endif %}
+  </div>
+  <div class="grid h-10 w-10 shrink-0 place-items-center rounded-full {{ 'bg-brand-500 text-white' if accent else 'bg-brand-50 text-brand-500' }}">
+    {{ icon(icon_name, "icon") }}
+  </div>
+</div>
+{%- endmacro %}
+
+{% macro empty_state(icon_name, title, text) -%}
+<div class="flex flex-col items-center justify-center px-6 py-14 text-center">
+  <div class="mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-brand-50 text-brand-500">{{ icon(icon_name, "icon-lg") }}</div>
+  <h3 class="text-base font-semibold">{{ title }}</h3>
+  <p class="mt-1 max-w-sm text-sm text-muted">{{ text }}</p>
+  {% if caller %}<div class="mt-5">{{ caller() }}</div>{% endif %}
+</div>
+{%- endmacro %}
+
+{% macro field(name, label, type="text", value="", error=None, placeholder="", hint=None, autocomplete=None, required=False, attrs="") -%}
+<div>
+  <label for="f-{{ name }}" class="label">{{ label }}</label>
+  <input id="f-{{ name }}" name="{{ name }}" type="{{ type }}" value="{{ value }}" placeholder="{{ placeholder }}"
+         class="input {{ 'input-error' if error }}" {% if autocomplete %}autocomplete="{{ autocomplete }}"{% endif %}
+         {% if required %}required{% endif %} {% if error %}aria-invalid="true" aria-describedby="e-{{ name }}"{% endif %} {{ attrs|safe }}>
+  {% if error %}<p id="e-{{ name }}" class="field-error">{{ error }}</p>{% elif hint %}<p class="hint">{{ hint }}</p>{% endif %}
+</div>
+{%- endmacro %}
+
+{% macro breakdown(title, rows, total, show_flag=False) -%}
+<div class="card p-5">
+  <h3 class="kbd-label">{{ title }}</h3>
+  {% if rows %}
+  <ul class="mt-4 space-y-3">
+    {% for row in rows %}
+    {% set pct = (row.count / total * 100) if total else 0 %}
+    <li>
+      <div class="mb-1 flex items-center justify-between gap-3 text-sm">
+        <span class="truncate font-medium">{% if show_flag %}{{ row.label|flag }} {% endif %}{{ row.label }}</span>
+        <span class="shrink-0 tabular-nums text-muted">{{ row.count|compact }} · {{ pct|round|int }}%</span>
+      </div>
+      <div class="h-1.5 overflow-hidden rounded-full bg-cultured"><div class="h-full rounded-full bg-brand-500" style="width: {{ pct }}%"></div></div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="mt-4 text-sm text-muted">No data yet.</p>
+  {% endif %}
+</div>
+{%- endmacro %}
+
+{% macro range_tabs(days, endpoint, extra={}) -%}
+<div class="inline-flex rounded-xl bg-cultured p-1" role="tablist">
+  {% for d in (7, 30, 90) %}
+  <a href="{{ url_for(endpoint, days=d, **extra) }}" role="tab" aria-selected="{{ 'true' if d == days else 'false' }}" class="tab">{{ d }}d</a>
+  {% endfor %}
+</div>
+{%- endmacro %}
+
+{% macro avatar(user, cls="h-9 w-9 text-sm") -%}
+{% if user.avatar_id %}
+<img src="{{ url_for('public.avatar', file_id=user.avatar_id) }}" alt="" class="{{ cls }} shrink-0 rounded-full object-cover">
+{% else %}
+<span class="{{ cls }} grid shrink-0 place-items-center rounded-full bg-brand-500 font-bold uppercase text-white">{{ (user.display_name or user.username or user.email)[:1] }}</span>
+{% endif %}
+{%- endmacro %}

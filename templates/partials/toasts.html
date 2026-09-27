@@ -1,0 +1,17 @@
+{% from "macros/ui.html" import icon %}
+{# Flashed server messages plus client-side toasts (window.toast) share one stack. #}
+<div x-data="toasts({{ get_flashed_messages(with_categories=true)|tojson|forceescape }})"
+     @toast.window="push($event.detail)"
+     class="pointer-events-none fixed inset-x-0 bottom-4 z-[100] flex flex-col items-center gap-2 px-4 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:items-end"
+     aria-live="polite">
+  <template x-for="t in items" :key="t.id">
+    <div x-show="t.show" x-transition.opacity.duration.200ms
+         class="pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-xl bg-ink px-4 py-3 text-sm text-white shadow-float">
+      <span class="mt-0.5" :class="t.type === 'error' ? 'text-red-400' : (t.type === 'success' ? 'text-emerald-400' : 'text-brand-300')">
+        <svg class="icon-sm"><use :href="`{{ url_for('static', filename='icons.svg') }}#i-${t.type === 'error' ? 'circle-alert' : (t.type === 'success' ? 'circle-check' : 'info')}`"></use></svg>
+      </span>
+      <span class="flex-1" x-text="t.message"></span>
+      <button type="button" class="text-white/60 hover:text-white" @click="dismiss(t.id)" aria-label="Dismiss">{{ icon('x', 'icon-sm') }}</button>
+    </div>
+  </template>
+</div>

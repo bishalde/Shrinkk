@@ -1,0 +1,81 @@
+{% extends "layouts/app.html" %}
+{% from "macros/ui.html" import icon, stat_tile, breakdown, range_tabs, empty_state %}
+{% block title %}Analytics · Shrinkk{% endblock %}
+{% block page_title %}Analytics{% endblock %}
+{% block head %}
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+  <div>
+    <h2 class="display text-2xl sm:text-3xl">Engagement</h2>
+    <p class="mt-1 text-sm text-muted">Every click and bio page view across your account, last {{ days }} days.</p>
+  </div>
+  {{ range_tabs(days, 'dashboard.analytics') }}
+</div>
+
+<div class="grid grid-cols-2 gap-4 xl:grid-cols-4">
+  {{ stat_tile("Link clicks", stats.clicks|compact, "mouse-pointer-click", accent=True) }}
+  {{ stat_tile("Profile views", stats.profile_views|compact, "eye") }}
+  {{ stat_tile("Clicks from bio page", stats.bio_clicks|compact, "user-round") }}
+  {{ stat_tile("Bio click rate", stats.bio_ctr ~ "%", "percent", sub="Clicks ÷ profile views") }}
+</div>
+
+<section class="card mt-6 p-5 sm:p-6">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <h3 class="text-[15px] font-bold uppercase tracking-tight">Clicks & views over time</h3>
+    <div class="flex items-center gap-4 text-xs font-medium text-muted">
+      <span class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-brand-500"></span>Clicks</span>
+      <span class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-brand-200"></span>Profile views</span>
+    </div>
+  </div>
+  <div class="mt-5 h-80"><canvas id="acct-chart" role="img" aria-label="Clicks and profile views per day"></canvas></div>
+</section>
+
+<div class="mt-6 grid gap-6 lg:grid-cols-3">
+  <section class="card lg:col-span-2">
+    <h3 class="kbd-label px-5 pt-5">Top links this period</h3>
+    {% if top_links %}
+    <ul class="mt-3 divide-y divide-line">
+      {% for link in top_links %}
+      <li class="flex items-center gap-4 px-5 py-3">
+        <span class="w-5 text-sm font-bold text-muted">{{ loop.index }}</span>
+        <div class="min-w-0 flex-1">
+          <a href="{{ url_for('dashboard.link_detail', link_id=link.id) }}" class="block truncate text-sm font-semibold hover:text-brand-500">{{ link.display_title }}</a>
+          <div class="truncate text-xs text-brand-500">{{ base_host }}/{{ link.short_code }}</div>
+        </div>
+        <span class="text-sm font-bold tabular-nums">{{ link.period_clicks|compact }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+      {{ empty_state("chart-column", "No clicks yet", "Share your links or bio page. Clicks will show up here within seconds.") }}
+    {% endif %}
+  </section>
+  <section class="card p-5">
+    <h3 class="kbd-label">Traffic source</h3>
+    {% if stats.by_source %}<div class="mx-auto mt-3 max-w-[240px]"><canvas id="source-chart" role="img" aria-label="Clicks by source"></canvas></div>
+    {% else %}<p class="mt-4 text-sm text-muted">No data yet.</p>{% endif %}
+  </section>
+</div>
+
+<div class="mt-6 grid gap-6 md:grid-cols-3">
+  {{ breakdown("Countries", stats.by_country, stats.clicks, show_flag=True) }}
+  {{ breakdown("Devices", stats.by_device, stats.clicks) }}
+  {{ breakdown("Referrers", stats.by_referrer, stats.clicks) }}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.addEventListener("load", () => {
+    seriesChart(document.getElementById("acct-chart"), [
+      { label: "Clicks", color: "#1662FF", data: {{ stats.click_series|tojson }} },
+      { label: "Profile views", color: "#B9CEFF", data: {{ stats.view_series|tojson }} },
+    ]);
+    doughnutChart(document.getElementById("source-chart"), {{ stats.by_source|tojson }});
+  });
+</script>
+{% endblock %}

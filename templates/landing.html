@@ -1,313 +1,458 @@
-{% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% extends "layouts/marketing.html" %}
+{% from "macros/ui.html" import icon, logo_mark %}
 
-{% block body %}
-<!-- Nav -->
-<nav class="fixed top-0 w-full z-50 glass border-b border-surface-200/50">
-    <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
-        <a href="/" class="text-xl font-extrabold tracking-tight">⚡ Shrinkk</a>
-        <div class="hidden md:flex items-center gap-8 text-[13px] font-medium text-surface-500">
-            <a href="#features" class="hover:text-surface-900 transition">Features</a>
-            <a href="#how" class="hover:text-surface-900 transition">How It Works</a>
-            <a href="#stats" class="hover:text-surface-900 transition">Why Us</a>
-        </div>
-        <div class="flex items-center gap-2.5">
-            <a href="/login" class="px-5 py-2 text-[13px] font-semibold text-surface-700 hover:text-surface-900 transition">Login</a>
-            <a href="/signup" class="px-5 py-2 text-[13px] font-semibold text-white gradient-brand rounded-lg hover:shadow-glow transition btn-press">Get Started</a>
-        </div>
-    </div>
-</nav>
+{% block title %}Shrinkk — Bio link & link shortener for everyone{% endblock %}
 
-<!-- Hero - Dark immersive -->
-<section class="relative min-h-[92vh] flex items-center overflow-hidden" style="background:radial-gradient(ellipse 80% 60% at 50% 40%,#312e81 0%,#0f172a 70%,#020617 100%)">
-    <div class="absolute inset-0">
-        <div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-brand-500/15 rounded-full blur-[120px] animate-pulse-slow"></div>
-        <div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-violet-500/10 rounded-full blur-[100px] animate-pulse-slow" style="animation-delay:1.5s"></div>
-        <div class="absolute inset-0" style="background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:32px 32px"></div>
+{# Decorative QR-like grid (not scannable): finder squares in three corners plus a stable pseudo-random fill. #}
+{% macro fake_qr(cls="h-24 w-24", fg="#101010") -%}
+<svg class="{{ cls }}" viewBox="0 0 25 25" shape-rendering="crispEdges" aria-hidden="true">
+  <rect width="25" height="25" fill="#fff"/>
+  {% for fx, fy in [(0, 0), (18, 0), (0, 18)] %}
+  <rect x="{{ fx }}" y="{{ fy }}" width="7" height="7" fill="{{ fg }}"/>
+  <rect x="{{ fx + 1 }}" y="{{ fy + 1 }}" width="5" height="5" fill="#fff"/>
+  <rect x="{{ fx + 2 }}" y="{{ fy + 2 }}" width="3" height="3" fill="{{ fg }}"/>
+  {% endfor %}
+  <path fill="{{ fg }}" d="
+  {%- for y in range(25) %}{% for x in range(25) -%}
+  {%- if not ((x < 8 and y < 8) or (x > 16 and y < 8) or (x < 8 and y > 16)) and ((x * 7 + y * 13 + x * y * 3 + (x // 3) * 5) % 7) < 3 %}M{{ x }} {{ y }}h1v1h-1z{% endif -%}
+  {%- endfor %}{% endfor -%}
+  "/>
+</svg>
+{%- endmacro %}
+
+{% macro phone(theme="classic", name="Maya Chen", handle="maya", bio="Designer & weekend potter", buttons=[], cls="") -%}
+{% set t = {
+  "classic": {"bg": "background:linear-gradient(180deg,#EEF3FF 0%,#FFFFFF 70%)", "text": "text-ink", "muted": "text-neutral-500", "btn": "bg-brand-500 text-white rounded-xl", "avatar": "bg-brand-100 text-brand-600"},
+  "midnight": {"bg": "background:radial-gradient(120% 80% at 50% 0%,#1D2B53 0%,#0B0F19 60%)", "text": "text-white", "muted": "text-slate-400", "btn": "bg-[#7EA6FF]/15 text-white rounded-xl backdrop-blur", "avatar": "bg-white/10 text-white"},
+  "sunset": {"bg": "background:linear-gradient(160deg,#FF8A5B 0%,#FF3D7F 55%,#7B2FF7 100%)", "text": "text-white", "muted": "text-white/80", "btn": "bg-white text-[#1F1235] rounded-2xl", "avatar": "bg-white/25 text-white"},
+}[theme] %}
+<div class="{{ cls }} relative w-[220px] shrink-0 rounded-[2.2rem] border-[6px] border-ink bg-ink shadow-float">
+  <div class="absolute left-1/2 top-2 z-10 h-4 w-16 -translate-x-1/2 rounded-full bg-ink"></div>
+  <div class="flex h-[420px] flex-col items-center overflow-hidden rounded-[1.8rem] px-4 pt-10 {{ t.text }}" style="{{ t.bg }}">
+    <div class="grid h-16 w-16 place-items-center rounded-full text-xl font-bold {{ t.avatar }}">{{ name[:1] }}</div>
+    <div class="mt-3 text-sm font-bold">{{ name }}</div>
+    <div class="text-[11px] {{ t.muted }}">@{{ handle }}</div>
+    <p class="mt-1.5 text-center text-[11px] leading-snug {{ t.muted }}">{{ bio }}</p>
+    <div class="mt-3 flex gap-2.5 opacity-90">
+      {{ icon('brand-instagram', 'icon-sm') }}{{ icon('brand-youtube', 'icon-sm') }}{{ icon('brand-x', 'icon-sm') }}
     </div>
-    <div class="max-w-7xl mx-auto px-6 relative z-10 w-full py-32">
-        <div class="grid lg:grid-cols-12 gap-12 items-center">
-            <div class="lg:col-span-6 animate-fade-up">
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-brand-300 text-xs font-semibold mb-8 backdrop-blur">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    Now in public beta
-                </div>
-                <h1 class="text-5xl md:text-[4.25rem] leading-[1.05] font-extrabold tracking-tight text-white">
-                    Shorten Links.<br>
-                    <span class="text-transparent bg-clip-text" style="background:linear-gradient(135deg,#818cf8,#c084fc,#f472b6)">Track Everything.</span><br>
-                    Grow Faster.
-                </h1>
-                <p class="mt-7 text-lg text-surface-400 leading-relaxed max-w-md">
-                    The link management platform for modern teams. Custom URLs, real-time analytics, QR codes — all in one place.
-                </p>
-                <div class="flex flex-wrap gap-3 mt-9">
-                    <a href="/signup" class="group px-8 py-4 gradient-brand text-white rounded-xl font-semibold text-sm hover:shadow-glow-lg transition-all btn-press flex items-center gap-2">
-                        Start For Free <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
-                    </a>
-                    <a href="#features" class="px-8 py-4 bg-white/5 text-white/80 rounded-xl font-semibold text-sm hover:bg-white/10 transition border border-white/10 btn-press backdrop-blur">
-                        See Features
-                    </a>
-                </div>
-                <div class="flex items-center gap-5 mt-12">
-                    <div class="flex -space-x-2">
-                        {% for c in ['brand','emerald','amber','rose','cyan'] %}
-                        <div class="w-8 h-8 rounded-full bg-{{c}}-400 border-2 border-surface-900 flex items-center justify-center text-[9px] font-bold text-white">{{ loop.index }}</div>
-                        {% endfor %}
-                    </div>
-                    <div class="border-l border-white/10 pl-5">
-                        <div class="flex gap-0.5 text-amber-400 text-[11px]">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                        <p class="text-[11px] text-surface-500 mt-0.5">Trusted by <strong class="text-white/70">500+</strong> users</p>
-                    </div>
-                </div>
-            </div>
-            <!-- Hero right - floating dashboard mockup -->
-            <div class="lg:col-span-6 hidden lg:block animate-fade-in">
-                <div class="relative">
-                    <div class="absolute -inset-4 bg-brand-500/10 rounded-3xl blur-2xl"></div>
-                    <div class="relative bg-surface-900/80 backdrop-blur-xl rounded-2xl border border-white/10 p-5 shadow-2xl">
-                        <div class="flex items-center gap-2 mb-4">
-                            <div class="flex gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-red-500/70"></div><div class="w-2.5 h-2.5 rounded-full bg-amber-500/70"></div><div class="w-2.5 h-2.5 rounded-full bg-emerald-500/70"></div></div>
-                            <div class="flex-1 bg-white/5 rounded-md px-3 py-1 text-[10px] text-surface-500 font-mono">shrinkk.in/dashboard</div>
-                        </div>
-                        <div class="grid grid-cols-3 gap-2 mb-4">
-                            <div class="bg-white/5 rounded-xl p-3 border border-white/5">
-                                <p class="text-[9px] text-surface-500 font-semibold uppercase">Links</p>
-                                <p class="text-xl font-extrabold text-white mt-0.5">142</p>
-                            </div>
-                            <div class="bg-brand-500/10 rounded-xl p-3 border border-brand-500/10">
-                                <p class="text-[9px] text-brand-400 font-semibold uppercase">Clicks</p>
-                                <p class="text-xl font-extrabold text-brand-300 mt-0.5">2,280</p>
-                            </div>
-                            <div class="bg-emerald-500/10 rounded-xl p-3 border border-emerald-500/10">
-                                <p class="text-[9px] text-emerald-400 font-semibold uppercase">Month</p>
-                                <p class="text-xl font-extrabold text-emerald-300 mt-0.5">1,756</p>
-                            </div>
-                        </div>
-                        <div class="flex items-end gap-1 h-20 mb-4 px-1">
-                            {% for h in [25,40,30,55,45,70,60,85,75,65,80,50,90,70] %}
-                            <div class="flex-1 rounded-t transition-all hover:opacity-80" style="height:{{h}}%;background:linear-gradient(to top,rgba(99,102,241,.3),rgba(99,102,241,.6))"></div>
-                            {% endfor %}
-                        </div>
-                        <div class="space-y-1.5">
-                            {% for code, url, clicks in [('mall','dribbble.com/MallKumator','856'),('notion','notion.so/workspace','421'),('figma','figma.com/design/abc','320')] %}
-                            <div class="flex items-center justify-between bg-white/5 rounded-lg px-3 py-2 border border-white/5">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-6 h-6 rounded bg-brand-500/20 flex items-center justify-center"><i data-lucide="link" class="w-3 h-3 text-brand-400"></i></div>
-                                    <div><p class="text-[11px] font-semibold text-brand-400">shrinkk.in/{{code}}</p><p class="text-[9px] text-surface-500">{{url}}</p></div>
-                                </div>
-                                <span class="text-[10px] font-bold text-surface-400">{{clicks}}</span>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="mt-4 w-full space-y-2.5">
+      {% for b in buttons %}
+      <div class="w-full px-3 py-2.5 text-center text-[12px] font-semibold {{ t.btn }}">{{ b }}</div>
+      {% endfor %}
+    </div>
+    <div class="mt-auto pb-4 text-[10px] font-semibold opacity-60">Made with Shrinkk</div>
+  </div>
+</div>
+{%- endmacro %}
+
+{% block content %}
+{# ───────────────────────── HERO ───────────────────────── #}
+<section class="relative overflow-hidden">
+  <div class="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full bg-brand-50 blur-3xl"></div>
+  <div class="relative mx-auto grid max-w-7xl items-center gap-14 px-4 pb-24 pt-14 sm:px-6 lg:grid-cols-12 lg:gap-10 lg:px-8 lg:pb-32 lg:pt-20">
+    <div class="animate-fade-up lg:col-span-7">
+      <span class="pill">Let's make it with one click 👋</span>
+      <h1 class="display mt-6 text-[40px] sm:text-5xl lg:text-[64px]">
+        Bio link &amp; link shortener
+        <span class="mx-1 inline-grid h-[0.9em] w-[1.25em] -translate-y-[0.06em] place-items-center rounded-xl bg-brand-500 align-middle text-white shadow-brand">{{ logo_mark("h-[0.5em] w-auto [&_path]:stroke-white") }}</span>
+        for everyone
+      </h1>
+      <p class="mt-6 max-w-xl text-base leading-relaxed text-neutral-600 sm:text-lg">
+        One platform to shorten links, generate QR codes, build a beautiful link-in-bio page and see exactly who's clicking, from where.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="{{ url_for('auth.signup') }}" class="btn btn-primary btn-lg">Get started free {{ icon('arrow-right', 'icon-sm') }}</a>
+        <a href="#how" class="btn btn-outline btn-lg">See how it works</a>
+      </div>
+      <dl class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
+        <div class="flex items-center gap-3">
+          <div class="grid h-10 w-10 place-items-center rounded-full bg-brand-50 text-brand-500">{{ icon('link', 'icon-sm') }}</div>
+          <div><dt class="text-xs text-muted">Links created</dt><dd class="text-lg font-bold">{{ stats.links|compact }}</dd></div>
         </div>
+        <div class="flex items-center gap-3">
+          <div class="grid h-10 w-10 place-items-center rounded-full bg-brand-50 text-brand-500">{{ icon('mouse-pointer-click', 'icon-sm') }}</div>
+          <div><dt class="text-xs text-muted">Clicks tracked</dt><dd class="text-lg font-bold">{{ stats.clicks|compact }}</dd></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="grid h-10 w-10 place-items-center rounded-full bg-brand-50 text-brand-500">{{ icon('shield-check', 'icon-sm') }}</div>
+          <div><dt class="text-xs text-muted">Price</dt><dd class="text-lg font-bold">Free</dd></div>
+        </div>
+      </dl>
     </div>
-    <!-- Bottom fade -->
-    <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
+
+    {# Stacked product cards #}
+    <div class="relative mx-auto w-full max-w-md lg:col-span-5 lg:max-w-none">
+      <div class="relative space-y-5 lg:pr-16">
+        <div class="card p-5 sm:p-6">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold uppercase tracking-wide">QR code</h3>
+            <span class="btn btn-primary btn-sm pointer-events-none">{{ icon('download', 'icon-sm') }} Download PNG</span>
+          </div>
+          <div class="mt-4 flex items-center gap-5">
+            <div class="rounded-xl border border-line p-2">{{ fake_qr("h-20 w-20 sm:h-24 sm:w-24") }}</div>
+            <div class="min-w-0 space-y-3 text-sm">
+              <div class="flex items-center gap-2.5 text-neutral-700">{{ icon('link-2', 'icon-sm text-brand-500') }}<span class="truncate">{{ base_host }}/launch</span></div>
+              <div class="flex items-center gap-2.5 text-neutral-700">{{ icon('calendar', 'icon-sm text-brand-500') }}<span>Sep 27, 2026</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="absolute right-6 top-[136px] z-10 grid h-14 w-14 place-items-center rounded-full border-4 border-white bg-brand-500 text-white shadow-brand sm:top-[150px] lg:right-20">
+          {{ icon('link', 'icon') }}
+        </div>
+
+        <div class="card p-5 sm:p-6">
+          <h3 class="text-sm font-bold uppercase tracking-wide">Custom your link</h3>
+          <div class="mt-4 rounded-xl bg-cultured p-3 sm:p-4">
+            <div class="overflow-hidden rounded-lg bg-white shadow-card">
+              <div class="flex items-center gap-1.5 border-b border-line px-3 py-2">
+                <span class="h-2 w-2 rounded-full bg-red-400"></span><span class="h-2 w-2 rounded-full bg-amber-400"></span><span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                <span class="ml-2 flex-1 truncate rounded bg-cultured px-2 py-0.5 text-[10px] text-muted">mystore.com/collections/autumn-sale-2026?ref=ig</span>
+              </div>
+              <div class="grid grid-cols-5 gap-3 p-3">
+                <div class="col-span-3 space-y-1.5">
+                  <div class="text-[11px] font-bold leading-tight">Autumn sale is live — up to 40% off everything.</div>
+                  <div class="h-1.5 w-full rounded bg-cultured"></div>
+                  <div class="h-1.5 w-4/5 rounded bg-cultured"></div>
+                  <div class="mt-2 inline-block rounded bg-brand-500 px-2 py-1 text-[9px] font-semibold text-white">Shop now</div>
+                </div>
+                <div class="col-span-2 flex items-end gap-1">
+                  {% for h in [40, 65, 50, 85, 70] %}<div class="flex-1 rounded-sm {{ 'bg-brand-500' if loop.index == 4 else 'bg-brand-200' }}" style="height: {{ h }}%"></div>{% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 flex items-center gap-2.5 text-sm">
+            {{ icon('link-2', 'icon-sm text-brand-500') }}
+            <span class="font-medium text-brand-600">{{ base_host }}/<span class="text-ink">autumn</span></span>
+            <span class="ml-auto badge bg-emerald-50 text-emerald-700">{{ icon('check', 'icon-sm') }} Live</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="absolute -bottom-16 -right-6 hidden origin-bottom-right scale-[0.62] xl:block">
+        {{ phone("classic", buttons=["My portfolio", "Shop my pottery", "Latest video"]) }}
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- Shorten Now -->
-<section id="features" class="py-20 relative -mt-16 z-10">
-    <div class="max-w-3xl mx-auto text-center px-6">
-        <div class="bg-white rounded-3xl shadow-elevated border border-surface-100 p-8 md:p-10">
-            <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">Shorten Your Link Now</h2>
-            <p class="text-surface-400 mt-2 text-sm">Paste your long URL and get a short, trackable link instantly</p>
-            <form action="/api/links/create" method="POST" class="mt-6 flex gap-2 bg-surface-50 p-2 rounded-2xl border border-surface-100">
-                <div class="flex-1 relative">
-                    <i data-lucide="globe" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-300"></i>
-                    <input type="url" name="original_url" placeholder="https://example.com/your-very-long-url..." required class="w-full pl-10 pr-4 py-3.5 rounded-xl text-sm focus:outline-none placeholder-surface-300 bg-white border border-surface-100 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition">
-                </div>
-                <button type="submit" class="px-8 py-3.5 gradient-brand text-white rounded-xl font-semibold text-sm hover:shadow-glow transition-all whitespace-nowrap btn-press flex items-center gap-2">
-                    <i data-lucide="zap" class="w-4 h-4"></i> Shorten
-                </button>
-            </form>
-            <p class="text-[11px] text-surface-300 mt-4">Free forever &middot; No signup required &middot; <a href="/signup" class="text-brand-600 font-semibold hover:underline">Sign up</a> to track clicks</p>
-        </div>
+{# ───────────────────────── SLANTED MARQUEE ───────────────────────── #}
+<section class="relative -mt-6 overflow-hidden py-14" aria-hidden="true">
+  <div class="absolute inset-x-[-10%] top-1/2 h-24 -translate-y-1/2 -rotate-3 bg-arsenic"></div>
+  <div class="relative -rotate-1 bg-brand-500 py-4 shadow-brand sm:py-5">
+    <div class="flex w-max animate-marquee whitespace-nowrap">
+      {% for _ in range(2) %}
+      <div class="flex shrink-0 items-center gap-6 pr-6 text-2xl font-extrabold uppercase tracking-tight text-white sm:text-3xl lg:text-4xl">
+        {% for word in ["Shortlink", "Bio page", "Custom link", "QR code", "Analytics", "Shortlink", "Bio page", "Custom link", "QR code", "Analytics"] %}
+        <span>{{ word }}</span><span class="text-white/60">•</span>
+        {% endfor %}
+      </div>
+      {% endfor %}
     </div>
+  </div>
 </section>
 
-<!-- Features -->
-<section class="py-24">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center mb-16">
-            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 text-brand-600 text-xs font-semibold mb-4 border border-brand-100">
-                <i data-lucide="sparkles" class="w-3 h-3"></i> Features
-            </div>
-            <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">Everything You Need</h2>
-            <p class="text-surface-400 mt-3 max-w-md mx-auto">Powerful tools designed to help you manage links and grow your audience</p>
-        </div>
-        <div class="grid md:grid-cols-3 gap-5">
-            {% set features = [
-                ("link","Custom Short Links","Create branded short URLs with custom aliases that match your brand identity.","brand","bg-brand-50 border-brand-100","text-brand-500"),
-                ("bar-chart-3","Real-Time Analytics","Track clicks, devices, browsers, locations, and referrers in real time.","emerald","bg-emerald-50 border-emerald-100","text-emerald-500"),
-                ("qr-code","QR Code Generator","Auto-generated QR codes for every link. Download as PNG instantly.","violet","bg-violet-50 border-violet-100","text-violet-500"),
-                ("clock","Link Expiration","Set time-based expiration for campaigns. Auto-disable when expired.","amber","bg-amber-50 border-amber-100","text-amber-500"),
-                ("shield-check","Secure &amp; Reliable","HTTPS encryption, rate limiting, and 99.9% uptime guaranteed.","rose","bg-rose-50 border-rose-100","text-rose-500"),
-                ("zap","Instant Redirect","Lightning-fast 302 redirects. Your audience never waits.","cyan","bg-cyan-50 border-cyan-100","text-cyan-500")
-            ] %}
-            {% for icon, title, desc, color, bg, tc in features %}
-            <div class="bg-white rounded-2xl p-6 shadow-card border border-surface-100 hover-lift group cursor-default">
-                <div class="w-12 h-12 rounded-xl {{bg}} border flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <i data-lucide="{{icon}}" class="w-5 h-5 {{tc}}"></i>
-                </div>
-                <h3 class="text-[15px] font-bold text-surface-900">{{title}}</h3>
-                <p class="text-[13px] text-surface-400 mt-2 leading-relaxed">{{desc}}</p>
-            </div>
-            {% endfor %}
-        </div>
+{# ───────────────────────── SHORTEN + HOW WE WORK ───────────────────────── #}
+<section id="shorten" class="dark-pattern scroll-mt-20 text-white">
+  <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+    <div class="grid items-center gap-8 lg:grid-cols-2">
+      <h2 class="display text-3xl sm:text-4xl">Shorten your link now</h2>
+      <form method="post" action="{{ url_for('pages.shorten') }}" class="flex w-full flex-col gap-2 rounded-2xl border border-white/10 bg-arsenic-800 p-2 sm:flex-row sm:items-center">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="hero-url" class="sr-only">Long URL</label>
+        <input id="hero-url" name="original_url" type="text" inputmode="url" required autocomplete="off"
+               placeholder="https://your-long-url.com/…"
+               class="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm text-white placeholder:text-white/40 focus:outline-none">
+        <button type="submit" class="btn btn-primary">Shorten {{ icon('arrow-right', 'icon-sm') }}</button>
+      </form>
     </div>
-</section>
 
-<!-- How it works -->
-<section id="how" class="py-24 bg-surface-950 relative overflow-hidden">
-    <div class="absolute inset-0" style="background-image:radial-gradient(rgba(255,255,255,.02) 1px,transparent 1px);background-size:24px 24px"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-600/5 rounded-full blur-3xl"></div>
-    <div class="max-w-7xl mx-auto px-6 relative">
-        <div class="text-center mb-16">
-            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-brand-300 text-xs font-semibold mb-4">
-                <i data-lucide="workflow" class="w-3 h-3"></i> Workflow
-            </div>
-            <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-white">How It Works</h2>
-            <p class="text-surface-400 mt-3">Five simple steps from URL to insights</p>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {% set steps = [("1","Paste Link","link"),("2","Shorten","scissors"),("3","Customize","edit-3"),("4","QR Code","qr-code"),("5","Track","bar-chart-3")] %}
-            {% for num, label, icon in steps %}
-            <div class="relative group">
-                <div class="{% if loop.first %}gradient-brand{% else %}bg-white/5 border border-white/10{% endif %} rounded-2xl p-6 text-center hover-lift backdrop-blur {% if not loop.first %}hover:bg-white/10{% endif %} transition">
-                    <div class="{% if loop.first %}bg-white/20{% else %}bg-white/5{% endif %} w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3">
-                        <i data-lucide="{{icon}}" class="w-5 h-5 {% if loop.first %}text-white{% else %}text-brand-400{% endif %}"></i>
-                    </div>
-                    <div class="{% if loop.first %}text-white/50{% else %}text-surface-600{% endif %} text-[10px] font-bold uppercase tracking-widest mb-1">Step {{num}}</div>
-                    <p class="text-sm font-semibold {% if loop.first %}text-white{% else %}text-surface-300{% endif %}">{{label}}</p>
-                </div>
-                {% if not loop.last %}
-                <div class="hidden md:block absolute top-1/2 -right-3 text-surface-700"><i data-lucide="chevron-right" class="w-4 h-4"></i></div>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</section>
+    <div class="my-16 h-px bg-white/10"></div>
 
-<!-- Stats -->
-<section id="stats" class="py-24">
-    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
-        <div>
-            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 text-brand-600 text-xs font-semibold mb-4 border border-brand-100">
-                <i data-lucide="trending-up" class="w-3 h-3"></i> By the numbers
-            </div>
-            <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">Why Use Our Service</h2>
-            <p class="text-surface-400 mt-3 max-w-lg">Our platform was built to help you make every point of connection between your content and your audience ignite action.</p>
-            <div class="grid grid-cols-2 gap-4 mt-10">
-                {% set stats = [("100k","Active Users","users","brand"),("50k","Links / Month","link","emerald"),("500+","Integrations","puzzle","amber"),("99%","Uptime","server","rose")] %}
-                {% for val, label, icon, color in stats %}
-                <div class="bg-white rounded-2xl p-5 shadow-card border border-surface-100 hover-lift">
-                    <div class="w-10 h-10 rounded-xl bg-{{color}}-50 border border-{{color}}-100 flex items-center justify-center mb-3"><i data-lucide="{{icon}}" class="w-4 h-4 text-{{color}}-500"></i></div>
-                    <p class="text-2xl font-extrabold">{{val}}</p>
-                    <p class="text-xs text-surface-400 mt-0.5">{{label}}</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="gradient-brand rounded-3xl p-10 text-white relative overflow-hidden shadow-glow-lg">
-            <div class="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-12 -mt-12 blur-2xl"></div>
-            <div class="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full -ml-8 -mb-8 blur-xl"></div>
-            <div class="relative">
-                <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mb-5 backdrop-blur"><i data-lucide="shield-check" class="w-7 h-7 text-white"></i></div>
-                <p class="text-lg font-semibold opacity-90">SSL and redirection</p>
-                <p class="text-4xl font-extrabold mt-2 leading-tight">URL with<br>no worries</p>
-                <p class="mt-5 text-sm opacity-70 leading-relaxed">Every link is secured with HTTPS encryption. Your audience can click with confidence, every time.</p>
-                <div class="mt-8 flex gap-6">
-                    <div class="bg-white/10 rounded-xl px-4 py-3 backdrop-blur"><p class="text-xl font-extrabold">256-bit</p><p class="text-[10px] opacity-60 mt-0.5">Encryption</p></div>
-                    <div class="bg-white/10 rounded-xl px-4 py-3 backdrop-blur"><p class="text-xl font-extrabold">&lt;50ms</p><p class="text-[10px] opacity-60 mt-0.5">Redirect Speed</p></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+    <div id="how" class="scroll-mt-24" x-data="{ step: 1 }">
+      <div class="grid items-end gap-6 lg:grid-cols-2">
+        <h2 class="display text-3xl sm:text-4xl">How we work 👇</h2>
+        <p class="max-w-lg text-sm leading-relaxed text-white/70 lg:justify-self-end">
+          Everything you need to build connections with your audience — short links, QR codes, a bio page and analytics — in a single, simple dashboard.
+        </p>
+      </div>
 
-<!-- CTA -->
-<section class="relative overflow-hidden" style="background:radial-gradient(ellipse 80% 80% at 50% 100%,#312e81 0%,#0f172a 60%,#020617 100%)">
-    <div class="absolute inset-0" style="background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:32px 32px"></div>
-    <div class="max-w-7xl mx-auto px-6 py-28 relative z-10 grid lg:grid-cols-2 gap-16 items-center">
-        <div>
-            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-brand-300 text-xs font-semibold mb-6">
-                <i data-lucide="flame" class="w-3 h-3"></i> Growth Hack your way to the Top!
-            </div>
-            <h2 class="text-4xl md:text-5xl font-extrabold text-white leading-tight">Get Closer To Your<br>Customers Today</h2>
-            <p class="text-surface-400 mt-5 max-w-md text-[15px]">Start shortening links, tracking performance, and growing your brand in minutes. Free to start.</p>
-            <div class="flex flex-wrap gap-4 mt-9">
-                <a href="/signup" class="group px-8 py-4 gradient-brand text-white rounded-xl font-semibold text-sm hover:shadow-glow-lg transition-all btn-press flex items-center gap-2">
-                    Get Started For Free <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
-                </a>
-            </div>
+      <div class="mt-10 overflow-x-auto rounded-2xl bg-arsenic-800 p-2 [scrollbar-width:none]">
+        <div class="flex min-w-max gap-2 lg:min-w-0 lg:justify-between" role="tablist">
+          {% for n, label in [(1, "Paste link"), (2, "Shorten"), (3, "Customize"), (4, "QR code"), (5, "Track")] %}
+          <button type="button" role="tab" @click="step = {{ n }}" :aria-selected="step === {{ n }}"
+                  :class="step === {{ n }} ? 'bg-brand-500 text-white shadow-brand' : 'text-white/80 hover:bg-white/5'"
+                  class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition">
+            <span :class="step === {{ n }} ? 'bg-white text-brand-600' : 'bg-white/90 text-ink'" class="grid h-6 w-6 place-items-center rounded-full text-xs font-bold">{{ n }}</span>
+            {{ label }}
+          </button>
+          {% endfor %}
         </div>
-        <div class="hidden lg:block">
-            <div class="bg-white/5 backdrop-blur rounded-2xl p-8 border border-white/10">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="flex gap-6">
-                        <div><p class="text-[10px] text-surface-500 uppercase font-semibold tracking-wider">Total Clicks</p><p class="text-3xl font-extrabold text-white mt-1">2,280</p></div>
-                        <div><p class="text-[10px] text-surface-500 uppercase font-semibold tracking-wider">Email, SMS, Direct</p><p class="text-3xl font-extrabold text-brand-400 mt-1">1,756</p></div>
-                    </div>
-                </div>
-                <div class="flex items-end gap-1.5 h-28">
-                    {% for h in [25,40,30,55,45,70,60,85,75,65,80,50,90,70,55] %}
-                    <div class="flex-1 rounded-t-md hover:opacity-80 transition" style="height:{{h}}%;background:linear-gradient(to top,rgba(99,102,241,.2),rgba(99,102,241,.5))"></div>
-                    {% endfor %}
-                </div>
-                <div class="mt-4 flex justify-between text-[9px] text-surface-600 font-medium">
-                    <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+      </div>
 
-<!-- Footer -->
-<footer class="bg-surface-950 text-white py-16 border-t border-surface-800">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="grid md:grid-cols-4 gap-10 mb-12">
-            <div>
-                <p class="text-lg font-extrabold">⚡ Shrinkk</p>
-                <p class="text-sm text-surface-400 mt-3 leading-relaxed">Smart link management platform with analytics, tracking, and automation.</p>
-                <div class="flex gap-3 mt-5">
-                    {% for icon in ['twitter','github','linkedin'] %}
-                    <a href="#" class="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition"><i data-lucide="{{icon}}" class="w-4 h-4 text-surface-400"></i></a>
-                    {% endfor %}
-                </div>
+      {# App window mockup #}
+      <div class="mt-8 overflow-hidden rounded-3xl bg-white p-2 text-ink shadow-float sm:p-3">
+        <div class="flex min-h-[340px] overflow-hidden rounded-2xl border border-line">
+          <aside class="hidden w-52 shrink-0 border-r border-line p-4 md:block">
+            <div class="mb-6 flex items-center gap-2 text-sm font-extrabold uppercase">{{ logo_mark("h-5 w-auto") }} Shrinkk</div>
+            <ul class="space-y-1 text-[13px]">
+              {% for ic, label, steps in [("layout-dashboard", "Dashboard", "[]"), ("link", "Links", "[1, 2, 4]"), ("user-round", "Bio page", "[3]"), ("chart-column", "Analytics", "[5]"), ("settings", "Settings", "[]")] %}
+              <li :class="{{ steps }}.includes(step) ? 'bg-brand-500 text-white' : 'text-neutral-600'"
+                  class="flex items-center gap-2.5 rounded-lg px-3 py-2 font-medium transition">{{ icon(ic, 'icon-sm') }} {{ label }}</li>
+              {% endfor %}
+            </ul>
+          </aside>
+
+          <div class="flex-1 p-5 sm:p-8">
+            <div class="mb-6 flex items-center justify-between">
+              <div class="text-sm font-bold uppercase tracking-wide"
+                   x-text="['','Create new link','Your short link','Customize','QR code','Performance'][step]"></div>
+              <div class="flex items-center gap-2">
+                <div class="h-7 w-7 rounded-full bg-brand-100"></div>
+                <span class="hidden text-xs font-medium sm:inline">Maya</span>
+              </div>
             </div>
-            <div>
-                <p class="text-[10px] font-bold uppercase tracking-widest text-surface-500 mb-4">Menu</p>
-                <div class="flex flex-col gap-2.5 text-sm text-surface-400">
-                    <a href="/" class="hover:text-white transition">Home</a>
-                    <a href="#features" class="hover:text-white transition">Features</a>
-                    <a href="#how" class="hover:text-white transition">How It Works</a>
-                </div>
+
+            <div x-show="step === 1" x-transition.opacity>
+              <p class="mb-3 text-sm text-muted">Paste any long URL — a product, a video, a form.</p>
+              <div class="flex flex-col gap-2 sm:flex-row">
+                <div class="flex-1 truncate rounded-xl border border-line px-4 py-3 text-sm text-neutral-500">https://mystore.com/collections/autumn-sale-2026?ref=instagram</div>
+                <span class="btn btn-primary pointer-events-none">Create link {{ icon('arrow-right', 'icon-sm') }}</span>
+              </div>
             </div>
-            <div>
-                <p class="text-[10px] font-bold uppercase tracking-widest text-surface-500 mb-4">Services</p>
-                <div class="flex flex-col gap-2.5 text-sm text-surface-400">
-                    <a href="/signup" class="hover:text-white transition">Link Shortener</a>
-                    <a href="/signup" class="hover:text-white transition">QR Codes</a>
-                    <a href="/signup" class="hover:text-white transition">Analytics</a>
+
+            <div x-show="step === 2" x-cloak x-transition.opacity>
+              <p class="mb-3 text-sm text-muted">Get a clean, short link you can share anywhere.</p>
+              <div class="flex flex-col items-start gap-4 rounded-2xl bg-brand-50 p-5 sm:flex-row sm:items-center">
+                <div class="grid h-11 w-11 place-items-center rounded-full bg-brand-500 text-white">{{ icon('scissors', 'icon-sm') }}</div>
+                <div class="min-w-0 flex-1">
+                  <div class="text-lg font-bold text-brand-600">{{ base_host }}/x7Kp2a</div>
+                  <div class="truncate text-xs text-muted">mystore.com/collections/autumn-sale-2026</div>
                 </div>
+                <span class="btn btn-light btn-sm pointer-events-none">{{ icon('copy', 'icon-sm') }} Copy</span>
+              </div>
             </div>
-            <div>
-                <p class="text-[10px] font-bold uppercase tracking-widest text-surface-500 mb-4">Newsletter</p>
-                <p class="text-xs text-surface-500 mb-3">Get the latest updates and tips.</p>
+
+            <div x-show="step === 3" x-cloak x-transition.opacity class="grid gap-4 sm:grid-cols-2">
+              <div>
+                <div class="label">Custom alias</div>
+                <div class="flex overflow-hidden rounded-xl border border-brand-500 ring-4 ring-brand-500/15">
+                  <span class="bg-cultured px-3 py-3 text-sm text-muted">{{ base_host }}/</span>
+                  <span class="px-3 py-3 text-sm font-semibold">autumn</span>
+                </div>
+              </div>
+              <div>
+                <div class="label">Tags</div>
+                <div class="flex flex-wrap gap-2 rounded-xl border border-line p-2.5">
+                  <span class="badge bg-brand-50 text-brand-600">campaign</span><span class="badge bg-brand-50 text-brand-600">instagram</span><span class="badge bg-amber-50 text-amber-700">sale</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 text-sm sm:col-span-2">
+                <span class="toggle" aria-checked="true"></span> Show on my bio page
+              </div>
+            </div>
+
+            <div x-show="step === 4" x-cloak x-transition.opacity class="flex flex-col items-center gap-6 sm:flex-row">
+              <div class="rounded-2xl border border-line p-3">{{ fake_qr("h-32 w-32", "#1662FF") }}</div>
+              <div class="space-y-3 text-sm">
+                <p class="text-muted">Pick your colors, then download as PNG or SVG for print.</p>
                 <div class="flex gap-2">
-                    <input type="email" placeholder="your@email.com" class="flex-1 px-4 py-2.5 text-sm bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-brand-500 text-white placeholder-surface-500 backdrop-blur">
-                    <button class="px-4 py-2.5 gradient-brand text-white text-sm rounded-lg font-semibold btn-press hover:shadow-glow transition">Join</button>
+                  {% for c in ["#101010", "#1662FF", "#7B2FF7", "#0F2E24"] %}<span class="h-7 w-7 rounded-full ring-2 ring-offset-2 {{ 'ring-brand-500' if c == '#1662FF' else 'ring-transparent' }}" style="background: {{ c }}"></span>{% endfor %}
                 </div>
+                <div class="flex gap-2"><span class="btn btn-primary btn-sm pointer-events-none">PNG</span><span class="btn btn-outline btn-sm pointer-events-none">SVG</span></div>
+              </div>
             </div>
+
+            <div x-show="step === 5" x-cloak x-transition.opacity>
+              <div class="mb-5 grid grid-cols-2 gap-3 sm:max-w-sm">
+                <div class="rounded-xl border border-line p-3"><div class="text-[11px] text-muted">Total clicks</div><div class="text-lg font-bold">2,280</div></div>
+                <div class="rounded-xl border border-line p-3"><div class="text-[11px] text-muted">Bio page views</div><div class="text-lg font-bold">1,756</div></div>
+              </div>
+              <div class="flex h-32 items-end gap-2 sm:gap-3">
+                {% for h in [35, 55, 42, 70, 48, 62, 90, 58, 75, 66, 80, 52] %}
+                <div class="flex-1 rounded-t-md {{ 'bg-brand-500' if loop.index == 7 else 'bg-brand-200' }}" style="height: {{ h }}%"></div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="border-t border-surface-800 pt-8 text-xs text-surface-500 flex flex-col md:flex-row justify-between gap-4">
-            <p>&copy; 2026 Shrinkk. All Rights Reserved.</p>
-            <div class="flex gap-6"><a href="#" class="hover:text-surface-300 transition">Terms</a><a href="#" class="hover:text-surface-300 transition">Privacy</a></div>
-        </div>
+      </div>
     </div>
-</footer>
+  </div>
+</section>
+
+{# ───────────────────────── BIO PAGES ───────────────────────── #}
+<section id="bio" class="scroll-mt-20 overflow-hidden bg-white">
+  <div class="mx-auto grid max-w-7xl items-center gap-14 px-4 py-24 sm:px-6 lg:grid-cols-12 lg:px-8">
+    <div class="lg:col-span-5">
+      <span class="pill">{{ icon('sparkles', 'icon-sm') }} Link in bio</span>
+      <h2 class="display mt-5 text-3xl sm:text-4xl lg:text-5xl">One link for everything you are</h2>
+      <p class="mt-5 text-base leading-relaxed text-neutral-600">
+        Get your own page at <span class="font-semibold text-ink">{{ base_host }}/@you</span> — put it in your Instagram, TikTok or email signature and send people everywhere that matters.
+      </p>
+      <ul class="mt-8 space-y-4">
+        {% for ic, title, text in [
+          ("palette", "Themes that look like you", "Six presets plus your own colors, button styles and fonts."),
+          ("brand-instagram", "All your socials", "Instagram, TikTok, YouTube, X, LinkedIn, GitHub and more."),
+          ("chart-column", "Built-in analytics", "Page views, clicks per button and where visitors come from."),
+          ("qr-code", "Share anywhere", "A QR code for your page, ready for flyers and business cards."),
+        ] %}
+        <li class="flex gap-4">
+          <div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-500">{{ icon(ic, 'icon-sm') }}</div>
+          <div><div class="font-semibold">{{ title }}</div><div class="text-sm text-muted">{{ text }}</div></div>
+        </li>
+        {% endfor %}
+      </ul>
+      <a href="{{ url_for('auth.signup') }}" class="btn btn-primary btn-lg mt-9">Claim your page {{ icon('arrow-right', 'icon-sm') }}</a>
+    </div>
+
+    <div class="relative lg:col-span-7">
+      <div class="pointer-events-none absolute inset-0 -z-0 m-auto h-72 w-72 rounded-full bg-brand-100 blur-3xl"></div>
+      <div class="relative flex justify-center gap-5 overflow-x-auto pb-6 [scrollbar-width:none] sm:overflow-visible">
+        {{ phone("midnight", "Leo Park", "leo.codes", "Indie dev. Shipping in public.", ["My newsletter", "GitHub projects", "Book a call"], "hidden sm:block sm:translate-y-10") }}
+        {{ phone("classic", "Maya Chen", "maya", "Designer & weekend potter", ["My portfolio", "Shop my pottery", "Latest video", "Say hello"], "") }}
+        {{ phone("sunset", "Ava Rivera", "avamusic", "New single out now 🎧", ["Listen on Spotify", "Tour dates", "Merch"], "hidden md:block md:translate-y-10") }}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ───────────────────────── FEATURES BAND ───────────────────────── #}
+<section id="features" class="brand-pattern scroll-mt-20 text-white">
+  <div class="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6 lg:px-8">
+    <h2 class="display text-3xl sm:text-4xl">Everything in one place</h2>
+    <p class="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/80 sm:text-base">
+      Creators, small businesses and teams use Shrinkk to turn every link into a measurable touchpoint — no technical skills needed.
+    </p>
+    <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {% for ic, title, text in [
+        ("link", "Short links", "Custom aliases, tags, expiry dates and a pause switch."),
+        ("user-round", "Bio pages", "A themed link-in-bio page with drag-and-drop ordering."),
+        ("qr-code", "QR codes", "Branded colors, PNG or SVG, scans tracked separately."),
+        ("chart-column", "Analytics", "Clicks over time, countries, devices and referrers."),
+      ] %}
+      <div class="rounded-2xl border border-white/15 bg-white/10 p-6 text-left backdrop-blur-sm">
+        <div class="grid h-11 w-11 place-items-center rounded-xl bg-white text-brand-500">{{ icon(ic, 'icon') }}</div>
+        <h3 class="mt-5 text-lg font-bold">{{ title }}</h3>
+        <p class="mt-1.5 text-sm leading-relaxed text-white/75">{{ text }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    <a href="{{ url_for('auth.signup') }}" class="btn btn-light mt-10">Start for free {{ icon('arrow-right', 'icon-sm') }}</a>
+  </div>
+</section>
+
+{# ───────────────────────── WHY SHRINKK ───────────────────────── #}
+<section class="bg-white">
+  <div class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+    <div class="grid items-end gap-6 lg:grid-cols-2">
+      <h2 class="display text-3xl sm:text-4xl">Why use Shrinkk</h2>
+      <p class="max-w-md text-sm leading-relaxed text-muted lg:justify-self-end">
+        Built to help you make every point of connection between your content and your audience spark action — and to show you what's working.
+      </p>
+    </div>
+    <div class="mt-12 grid gap-4 lg:grid-cols-3">
+      <div class="grid gap-4 sm:grid-cols-2 lg:col-span-2">
+        {% for value, label, ic in [
+          (stats.users|compact, "Creators", "users"),
+          (stats.links|compact, "Links created", "link"),
+          (stats.clicks|compact, "Clicks tracked", "mouse-pointer-click"),
+          ("Free", "Forever plan", "zap"),
+        ] %}
+        <div class="flex items-start justify-between rounded-2xl bg-cultured p-6">
+          <div>
+            <div class="text-3xl font-bold tracking-tight">{{ value }}</div>
+            <div class="mt-1 text-sm text-muted">{{ label }}</div>
+          </div>
+          <div class="grid h-10 w-10 place-items-center rounded-full bg-brand-500 text-white">{{ icon(ic, 'icon-sm') }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="relative flex min-h-[240px] flex-col justify-between overflow-hidden rounded-2xl bg-brand-500 p-7 text-white shadow-brand">
+        <div class="grid h-11 w-11 place-items-center rounded-full bg-white/20">{{ icon('lock', 'icon') }}</div>
+        {{ logo_mark("pointer-events-none absolute -right-12 top-6 h-44 w-auto rotate-[-20deg] opacity-15 [&_path]:stroke-white") }}
+        <h3 class="relative text-2xl font-bold uppercase leading-tight tracking-tight">SSL and redirects<br>with no worries</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ───────────────────────── PRICING ───────────────────────── #}
+<section id="pricing" class="scroll-mt-20 bg-cultured">
+  <div class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-3xl text-center">
+      <h2 class="display text-3xl sm:text-4xl">Simple pricing</h2>
+      <p class="mt-4 text-muted">No tiers, no trials, no credit card.</p>
+    </div>
+    <div class="card mx-auto mt-12 grid max-w-3xl overflow-hidden md:grid-cols-2">
+      <div class="p-8">
+        <div class="kbd-label">Free</div>
+        <div class="mt-3 flex items-baseline gap-1"><span class="text-5xl font-bold tracking-tight">$0</span><span class="text-muted">/ forever</span></div>
+        <p class="mt-3 text-sm text-muted">Everything Shrinkk does, for everyone.</p>
+        <a href="{{ url_for('auth.signup') }}" class="btn btn-primary mt-8 w-full">Get started free</a>
+      </div>
+      <ul class="space-y-3.5 border-t border-line bg-brand-50/50 p-8 text-sm md:border-l md:border-t-0">
+        {% for item in ["Unlimited short links", "Custom aliases & tags", "Your own bio page", "Branded QR codes (PNG & SVG)", "Click & page-view analytics", "Link expiry & pause"] %}
+        <li class="flex items-center gap-3"><span class="grid h-5 w-5 place-items-center rounded-full bg-brand-500 text-white">{{ icon('check', 'h-3 w-3') }}</span>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+
+{# ───────────────────────── CTA ───────────────────────── #}
+<section class="dark-pattern overflow-hidden text-white">
+  <div class="mx-auto grid max-w-7xl items-center gap-14 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-24">
+    <div>
+      <span class="inline-flex items-center gap-2 text-sm font-medium text-white/80">🔥 Growth hack your way to the top!</span>
+      <h2 class="display mt-4 text-3xl sm:text-4xl lg:text-5xl">Get closer to your audience today</h2>
+      <a href="{{ url_for('auth.signup') }}" class="btn btn-primary btn-lg mt-8">Get started free {{ icon('arrow-right', 'icon-sm') }}</a>
+    </div>
+
+    <div class="relative">
+      <div class="rounded-2xl bg-white p-5 text-ink shadow-float sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="text-sm font-bold uppercase tracking-wide">Performance</div>
+          <div class="flex items-center gap-3 text-xs text-muted">
+            <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-brand-500"></span>Clicks</span>
+            <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-brand-200"></span>Views</span>
+          </div>
+        </div>
+        <div class="mt-5 grid grid-cols-2 gap-3">
+          <div class="flex items-center gap-3 rounded-xl border border-line p-3">
+            <div class="grid h-9 w-9 place-items-center rounded-full bg-brand-500 text-white">{{ icon('chart-column', 'icon-sm') }}</div>
+            <div><div class="text-[11px] text-muted">Total clicks</div><div class="font-bold">2,280</div></div>
+          </div>
+          <div class="flex items-center gap-3 rounded-xl border border-line p-3">
+            <div class="grid h-9 w-9 place-items-center rounded-full bg-brand-50 text-brand-500">{{ icon('smartphone', 'icon-sm') }}</div>
+            <div><div class="text-[11px] text-muted">Bio views</div><div class="font-bold">1,756</div></div>
+          </div>
+        </div>
+        <div class="relative mt-6 flex h-40 items-end gap-2 sm:gap-3">
+          {% for h in [30, 45, 38, 60, 52, 70, 95, 64, 78, 58, 85, 72] %}
+          <div class="relative flex-1 rounded-t-md {{ 'bg-brand-500' if loop.index == 7 else 'bg-brand-200' }}" style="height: {{ h }}%">
+            {% if loop.index == 7 %}
+            <div class="absolute -top-14 left-1/2 w-max -translate-x-1/2 rounded-lg bg-ink px-2.5 py-1.5 text-[10px] leading-tight text-white shadow-float">
+              <div class="text-white/60">July 2026</div><div class="font-semibold">Clicks: <span class="text-brand-300">330</span></div>
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+        <div class="mt-2 flex justify-between text-[10px] text-muted">
+          {% for m in ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] %}<span class="flex-1 text-center">{{ m }}</span>{% endfor %}
+        </div>
+      </div>
+      <div class="absolute -bottom-6 -left-4 hidden w-64 rounded-xl bg-white p-3 text-ink shadow-float sm:block lg:-left-10">
+        <div class="flex items-center justify-between">
+          <div class="truncate text-xs font-semibold text-brand-600">{{ base_host }}/autumn</div>
+          <span class="grid h-6 w-6 place-items-center rounded-md bg-brand-500 text-white">{{ icon('copy', 'h-3 w-3') }}</span>
+        </div>
+        <div class="mt-1 truncate text-[10px] text-muted">mystore.com/collections/autumn-sale-2026</div>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}
