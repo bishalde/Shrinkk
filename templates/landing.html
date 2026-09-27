@@ -20,7 +20,7 @@
 </svg>
 {%- endmacro %}
 
-{% macro phone(theme="classic", name="Bishal", handle="bishal", bio="Designer & weekend potter", buttons=[], cls="") -%}
+{% macro phone(theme="classic", name="Bishal De", handle="bishal", bio="Designer & weekend potter", buttons=[], cls="") -%}
 {% set t = {
   "classic": {"bg": "background:linear-gradient(180deg,#EEF3FF 0%,#FFFFFF 70%)", "text": "text-ink", "muted": "text-neutral-500", "btn": "bg-brand-500 text-white rounded-xl", "avatar": "bg-brand-100 text-brand-600"},
   "midnight": {"bg": "background:radial-gradient(120% 80% at 50% 0%,#1D2B53 0%,#0B0F19 60%)", "text": "text-white", "muted": "text-slate-400", "btn": "bg-[#7EA6FF]/15 text-white rounded-xl backdrop-blur", "avatar": "bg-white/10 text-white"},
@@ -50,7 +50,7 @@
 {# ───────────────────────── HERO ───────────────────────── #}
 <section class="relative overflow-hidden">
   <div class="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full bg-brand-50 blur-3xl"></div>
-  <div class="relative mx-auto grid max-w-7xl items-center gap-14 px-4 pb-24 pt-14 sm:px-6 lg:grid-cols-12 lg:gap-10 lg:px-8 lg:pb-32 lg:pt-20">
+  <div class="relative mx-auto grid grid-cols-1 max-w-7xl items-center gap-14 px-4 pb-24 pt-14 sm:px-6 lg:grid-cols-12 lg:gap-10 lg:px-8 lg:pb-32 lg:pt-20">
     <div class="animate-fade-up lg:col-span-7">
       <span class="pill">Let's make it with one click 👋</span>
       {# A different headline on every load; the logo tile sits between the two halves. #}
@@ -165,7 +165,7 @@
 {# ───────────────────────── SHORTEN + HOW WE WORK ───────────────────────── #}
 <section id="shorten" class="dark-pattern scroll-mt-20 text-white">
   <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-    <div class="grid items-center gap-8 lg:grid-cols-2">
+    <div class="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
       <h2 class="display text-3xl sm:text-4xl">Shorten your link now</h2>
       <form method="post" action="{{ url_for('pages.shorten') }}" class="flex w-full flex-col gap-2 rounded-2xl border border-white/10 bg-arsenic-800 p-2 sm:flex-row sm:items-center">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -180,7 +180,7 @@
     <div class="my-16 h-px bg-white/10"></div>
 
     <div id="how" class="scroll-mt-24" x-data="{ step: 1 }">
-      <div class="grid items-end gap-6 lg:grid-cols-2">
+      <div class="grid grid-cols-1 items-end gap-6 lg:grid-cols-2">
         <h2 class="display text-3xl sm:text-4xl">How we work 👇</h2>
         <p class="max-w-lg text-sm leading-relaxed text-white/70 lg:justify-self-end">
           Everything you need to build connections with your audience — short links, QR codes, a bio page and analytics — in a single, simple dashboard.
@@ -213,13 +213,13 @@
             </ul>
           </aside>
 
-          <div class="flex-1 p-5 sm:p-8">
+          <div class="min-w-0 flex-1 p-5 sm:p-8">
             <div class="mb-6 flex items-center justify-between">
               <div class="text-sm font-bold uppercase tracking-wide"
                    x-text="['','Create new link','Your short link','Customize','QR code','Performance'][step]"></div>
               <div class="flex items-center gap-2">
                 <div class="h-7 w-7 rounded-full bg-brand-100"></div>
-                <span class="hidden text-xs font-medium sm:inline">Bishal</span>
+                <span class="hidden text-xs font-medium sm:inline">Bishal De</span>
               </div>
             </div>
 
@@ -243,7 +243,7 @@
               </div>
             </div>
 
-            <div x-show="step === 3" x-cloak x-transition.opacity class="grid gap-4 sm:grid-cols-2">
+            <div x-show="step === 3" x-cloak x-transition.opacity class="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <div class="label">Custom alias</div>
                 <div class="flex overflow-hidden rounded-xl border border-brand-500 ring-4 ring-brand-500/15">
@@ -293,7 +293,7 @@
 
 {# ───────────────────────── BIO PAGES ───────────────────────── #}
 <section id="bio" class="scroll-mt-20 overflow-hidden bg-white">
-  <div class="mx-auto grid max-w-7xl items-center gap-14 px-4 py-24 sm:px-6 lg:grid-cols-12 lg:px-8">
+  <div class="mx-auto grid grid-cols-1 max-w-7xl items-center gap-14 px-4 py-24 sm:px-6 lg:grid-cols-12 lg:px-8">
     <div class="lg:col-span-5">
       <span class="pill">{{ icon('sparkles', 'icon-sm') }} Link in bio</span>
       <h2 class="display mt-5 text-3xl sm:text-4xl lg:text-5xl">One link for everything you are</h2>
@@ -320,7 +320,7 @@
       <div class="pointer-events-none absolute inset-0 -z-0 m-auto h-72 w-72 rounded-full bg-brand-100 blur-3xl"></div>
       <div class="relative flex justify-center gap-5 overflow-x-auto pb-6 [scrollbar-width:none] sm:overflow-visible">
         {{ phone("midnight", "Sima", "sima.codes", "Indie dev. Shipping in public.", ["My newsletter", "GitHub projects", "Book a call"], "hidden sm:block sm:translate-y-10") }}
-        {{ phone("classic", "Bishal", "bishal", "Designer & weekend potter", ["My portfolio", "Shop my pottery", "Latest video", "Say hello"], "") }}
+        {{ phone("classic", "Bishal De", "bishal", "Designer & weekend potter", ["My portfolio", "Shop my pottery", "Latest video", "Say hello"], "") }}
         {{ phone("sunset", "Basak", "basakmusic", "New single out now 🎧", ["Listen on Spotify", "Tour dates", "Merch"], "hidden md:block md:translate-y-10") }}
       </div>
     </div>
@@ -334,7 +334,7 @@
     <p class="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/80 sm:text-base">
       Creators, small businesses and teams use Shrinkk to turn every link into a measurable touchpoint — no technical skills needed.
     </p>
-    <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {% for ic, title, text in [
         ("link", "Short links", "Custom aliases, tags, expiry dates and a pause switch."),
         ("user-round", "Bio pages", "A themed link-in-bio page with drag-and-drop ordering."),
@@ -355,14 +355,14 @@
 {# ───────────────────────── WHY SHRINKK ───────────────────────── #}
 <section class="bg-white">
   <div class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
-    <div class="grid items-end gap-6 lg:grid-cols-2">
+    <div class="grid grid-cols-1 items-end gap-6 lg:grid-cols-2">
       <h2 class="display text-3xl sm:text-4xl">Why use Shrinkk</h2>
       <p class="max-w-md text-sm leading-relaxed text-muted lg:justify-self-end">
         Built to help you make every point of connection between your content and your audience spark action — and to show you what's working.
       </p>
     </div>
-    <div class="mt-12 grid gap-4 lg:grid-cols-3">
-      <div class="grid gap-4 sm:grid-cols-2 lg:col-span-2">
+    <div class="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-2">
         {% for value, label, ic in [
           (stats.users|compact, "Creators", "users"),
           (stats.links|compact, "Links created", "link"),
@@ -394,7 +394,7 @@
       <h2 class="display text-3xl sm:text-4xl">Simple pricing</h2>
       <p class="mt-4 text-muted">No tiers, no trials, no credit card.</p>
     </div>
-    <div class="card mx-auto mt-12 grid max-w-3xl overflow-hidden md:grid-cols-2">
+    <div class="card mx-auto mt-12 grid grid-cols-1 max-w-3xl overflow-hidden md:grid-cols-2">
       <div class="p-8">
         <div class="kbd-label">Free</div>
         <div class="mt-3 flex items-baseline gap-1"><span class="text-5xl font-bold tracking-tight">$0</span><span class="text-muted">/ forever</span></div>
@@ -412,7 +412,7 @@
 
 {# ───────────────────────── CTA ───────────────────────── #}
 <section class="dark-pattern overflow-hidden text-white">
-  <div class="mx-auto grid max-w-7xl items-center gap-14 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-24">
+  <div class="mx-auto grid grid-cols-1 max-w-7xl items-center gap-14 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-24">
     <div>
       <span class="inline-flex items-center gap-2 text-sm font-medium text-white/80">🔥 Growth hack your way to the top!</span>
       <h2 class="display mt-4 text-3xl sm:text-4xl lg:text-5xl">Get closer to your audience today</h2>

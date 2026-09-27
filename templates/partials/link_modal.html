@@ -26,7 +26,7 @@
           <input id="lm-url" name="original_url" x-model="form.original_url" x-ref="url" class="input" placeholder="https://example.com/very/long/link" required>
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label class="label" for="lm-title">Title <span class="font-normal text-muted">(optional)</span></label>
             <input id="lm-title" name="title" x-model="form.title" class="input" placeholder="My portfolio" maxlength="100">
@@ -43,7 +43,7 @@
           {{ icon('triangle-alert', 'icon-sm') }} The old short link will stop working.
         </p>
 
-        <div class="grid gap-4 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label class="label" for="lm-tags">Tags</label>
             <input id="lm-tags" name="tags" x-model="form.tags" class="input" placeholder="social, launch">
@@ -72,7 +72,7 @@
             <span class="transition" :class="utmOpen && 'rotate-180'">{{ icon('chevron-down', 'icon-sm text-muted') }}</span>
           </button>
           <div x-show="utmOpen" x-cloak class="space-y-3 border-t border-line px-4 pt-3 pb-4">
-            <div class="grid gap-3 sm:grid-cols-3">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <input x-model="utm.source" class="input !py-2" placeholder="source (e.g. twitter)" aria-label="UTM source">
               <input x-model="utm.medium" class="input !py-2" placeholder="medium (e.g. social)" aria-label="UTM medium">
               <input x-model="utm.campaign" class="input !py-2" placeholder="campaign" aria-label="UTM campaign">

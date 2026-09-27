@@ -18,7 +18,7 @@
     'links': profile_links, 'otherLinks': other_links,
     'socials': socials_values, 'appearance': appearance,
   }|tojson|forceescape }})"
-  class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_400px]">
+  class="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_400px]">
 
   {# ---------------- Editor ---------------- #}
   <div class="min-w-0">
@@ -40,7 +40,7 @@
     <section x-show="tab === 'links'" class="mt-5 space-y-4">
       <form class="card p-5" @submit.prevent="addLink()">
         <h3 class="text-[15px] font-bold uppercase tracking-tight">Add a link</h3>
-        <div class="mt-4 grid gap-3 sm:grid-cols-[1fr_1.4fr_auto]">
+        <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1.4fr_auto]">
           <input x-model="newLink.title" class="input" placeholder="Title (e.g. My portfolio)" maxlength="100" aria-label="Link title">
           <input x-model="newLink.original_url" class="input" placeholder="https://…" required aria-label="Link URL">
           <button class="btn btn-primary" :disabled="adding">{{ icon('plus', 'icon-sm') }} Add</button>
@@ -121,7 +121,7 @@
     <section x-show="tab === 'socials'" x-cloak class="card mt-5 p-5 sm:p-6">
       <h3 class="text-[15px] font-bold uppercase tracking-tight">Social icons</h3>
       <p class="mt-1 text-sm text-muted">Enter a handle (like <span class="font-medium text-ink">@yourname</span>) or a full URL. Icons appear under your bio.</p>
-      <div class="mt-5 grid gap-4 sm:grid-cols-2">
+      <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <template x-for="(net, key) in networks" :key="key">
           <div>
             <label class="label" :for="`soc-${key}`" x-text="net.label"></label>
@@ -157,7 +157,7 @@
 
       <div class="card space-y-6 p-5 sm:p-6">
         <h3 class="text-[15px] font-bold uppercase tracking-tight">Customize</h3>
-        <div class="grid gap-4 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <span class="label">Background</span>
             <div class="flex items-center gap-2">

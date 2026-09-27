@@ -56,3 +56,11 @@ def test_formatting():
     assert flag("US") == "🇺🇸"
     assert flag(None) == "🌐"
 
+
+
+def test_lockfile_only_uses_public_npm_registry():
+    import json
+    from pathlib import Path
+    lock = json.loads((Path(__file__).parent.parent / "package-lock.json").read_text())
+    hosts = {p["resolved"].split("/")[2] for p in lock["packages"].values() if "resolved" in p}
+    assert hosts == {"registry.npmjs.org"}

@@ -64,7 +64,7 @@ def seed(email, username, name, bio, socials, appearance, links, views):
 
 
 seed(
-    "demo@shrinkk.app", "bishal", "Bishal",
+    "demo@shrinkk.app", "bishal", "Bishal De",
     "Product designer & creator. Sharing tools, templates and what I'm building ✨",
     {"instagram": "@bishal", "x": "@bishal", "youtube": "@bishal", "github": "bishal", "website": "bishal.design"},
     {"theme": "classic"},

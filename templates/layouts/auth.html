@@ -1,7 +1,7 @@
 {% extends "layouts/base.html" %}
 {% from "macros/ui.html" import icon, logo, logo_mark %}
 {% block body %}
-<div class="grid min-h-screen lg:grid-cols-[1fr_minmax(0,560px)] xl:grid-cols-2">
+<div class="grid grid-cols-1 min-h-screen lg:grid-cols-[1fr_minmax(0,560px)] xl:grid-cols-2">
   <main class="flex flex-col px-5 py-6 sm:px-10">
     <div>{{ logo() }}</div>
     <div class="mx-auto flex w-full max-w-[400px] flex-1 flex-col justify-center py-10">
@@ -22,8 +22,8 @@
     <div class="relative mx-auto mt-10 w-[270px] rounded-[2.2rem] border-[6px] border-ink bg-ink shadow-float">
       <div class="bio overflow-hidden rounded-[1.8rem] px-5 pt-10 pb-8 text-center"
            style="--bio-bg:linear-gradient(180deg,#EEF3FF 0%,#FFFFFF 70%);--bio-text:#101010;--bio-muted:#5B6270;--bio-btn-bg:#1662FF;--bio-btn-text:#fff;--bio-radius:14px;--bio-font:inherit">
-        <div class="mx-auto grid h-16 w-16 place-items-center rounded-full bg-brand-500 text-xl font-bold text-white">A</div>
-        <div class="mt-3 font-bold">Alex Rivera</div>
+        <div class="mx-auto grid h-16 w-16 place-items-center rounded-full bg-brand-500 text-xl font-bold text-white">B</div>
+        <div class="mt-3 font-bold">Bishal De</div>
         <div class="bio-muted text-xs">Designer · Creator · Coffee</div>
         <div class="mt-3 flex justify-center gap-1">
           <span class="bio-social">{{ icon('brand-instagram', 'icon-sm') }}</span>

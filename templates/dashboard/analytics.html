@@ -34,7 +34,7 @@
   <div class="mt-5 h-80"><canvas id="acct-chart" role="img" aria-label="Clicks and profile views per day"></canvas></div>
 </section>
 
-<div class="mt-6 grid gap-6 lg:grid-cols-3">
+<div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
   <section class="card lg:col-span-2">
     <h3 class="kbd-label px-5 pt-5">Top links this period</h3>
     {% if top_links %}
@@ -61,7 +61,7 @@
   </section>
 </div>
 
-<div class="mt-6 grid gap-6 md:grid-cols-3">
+<div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
   {{ breakdown("Countries", stats.by_country, stats.clicks, show_flag=True) }}
   {{ breakdown("Devices", stats.by_device, stats.clicks) }}
   {{ breakdown("Referrers", stats.by_referrer, stats.clicks) }}

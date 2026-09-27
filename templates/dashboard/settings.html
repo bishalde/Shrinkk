@@ -4,7 +4,7 @@
 {% block page_title %}Settings{% endblock %}
 
 {% macro section(title, text) -%}
-<section class="card grid gap-6 p-5 sm:p-6 lg:grid-cols-[260px_1fr]">
+<section class="card grid grid-cols-1 gap-6 p-5 sm:p-6 lg:grid-cols-[260px_1fr]">
   <div>
     <h3 class="text-[15px] font-bold uppercase tracking-tight">{{ title }}</h3>
     <p class="mt-1 text-sm text-muted">{{ text }}</p>
@@ -63,7 +63,7 @@
   </form>
   {% endcall %}
 
-  <section class="card grid gap-6 border-red-200 p-5 sm:p-6 lg:grid-cols-[260px_1fr]" x-data="{ confirmText: '' }">
+  <section class="card grid grid-cols-1 gap-6 border-red-200 p-5 sm:p-6 lg:grid-cols-[260px_1fr]" x-data="{ confirmText: '' }">
     <div>
       <h3 class="text-[15px] font-bold uppercase tracking-tight text-red-600">Delete account</h3>
       <p class="mt-1 text-sm text-muted">Permanently deletes your bio page, all links, their analytics, and your photo. This can't be undone.</p>
