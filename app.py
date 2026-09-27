@@ -51,7 +51,23 @@ def create_app(config_overrides=None, db=None):
 
     _register_template_helpers(app)
     _register_error_handlers(app)
+    _ensure_indexes_on_first_request(app)
     return app
+
+
+def _ensure_indexes_on_first_request(app):
+    """Create indexes (unique email/username etc.) once per instance, so a fresh database needs no manual setup."""
+    state = {"done": False}
+
+    @app.before_request
+    def ensure_indexes():
+        if state["done"]:
+            return
+        try:
+            app.extensions["repos"].ensure_indexes()  # idempotent
+            state["done"] = True
+        except Exception:  # DB unreachable: let the request continue and retry on the next one
+            app.logger.exception("Could not ensure MongoDB indexes")
 
 
 def _connect(uri, db_name):

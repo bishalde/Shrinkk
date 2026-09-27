@@ -80,3 +80,13 @@ def test_landing_rotates_headline(client):
     halves = ["for everyone", "bigger reach", "for everything you share", "track every click", "in one bio link"]
     seen = {h for _ in range(40) for h in halves if h in client.get("/").get_data(as_text=True)}
     assert len(seen) > 1
+
+
+def test_fresh_database_gets_indexes_on_first_request():
+    import mongomock
+    from app import create_app
+    db = mongomock.MongoClient(tz_aware=True).db
+    app = create_app({"TESTING": True, "RATELIMIT_ENABLED": False, "PRODUCTION": False}, db=db)
+    assert "email_1" not in db.users.index_information()
+    app.test_client().get("/")
+    assert db.users.index_information()["email_1"].get("unique")
