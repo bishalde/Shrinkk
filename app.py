@@ -149,7 +149,7 @@ def _error_reference(exc):
     where = None
     for frame in traceback.extract_tb(exc.__traceback__):
         path = os.path.relpath(frame.filename, BASE_DIR)
-        if not path.startswith("..") and ".venv" not in path and "site-packages" not in path:
+        if not path.startswith("..") and not any(d in path for d in (".venv", "site-packages", "_vendor")):
             where = f"{path}:{frame.lineno}"
     return f"{type(exc).__name__} at {where}" if where else type(exc).__name__
 

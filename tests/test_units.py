@@ -64,3 +64,19 @@ def test_lockfile_only_uses_public_npm_registry():
     lock = json.loads((Path(__file__).parent.parent / "package-lock.json").read_text())
     hosts = {p["resolved"].split("/")[2] for p in lock["packages"].values() if "resolved" in p}
     assert hosts == {"registry.npmjs.org"}
+
+
+def test_vercel_excludes_never_drop_app_code():
+    """Vercel matches excludeFiles globs at any depth: "public/**" once removed templates/public/profile.html."""
+    import json
+    import re
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parent.parent
+    pattern = json.loads((root / "vercel.json").read_text())["functions"]["api/index.py"]["excludeFiles"]
+    dirs = re.fullmatch(r"\{(.+)\}/\*\*", pattern).group(1).split(",")
+    app_files = [f.relative_to(root).as_posix() for top in ("templates", "routes", "services", "models", "utils", "api")
+                 for f in (root / top).rglob("*") if f.is_file()]
+    for d in dirs:
+        hits = [f for f in app_files if f"/{d}/" in f"/{f}"]
+        assert not hits, f"excludeFiles '{d}/**' would drop {hits}"
