@@ -10,7 +10,8 @@ def _is_production():
 
 
 class Config:
-    MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
+    # MONGODB_URI is what Vercel's MongoDB Atlas integration sets.
+    MONGO_URI = os.getenv("MONGO_URI") or os.getenv("MONGODB_URI") or "mongodb://localhost:27017"
     MONGO_DB = os.getenv("MONGO_DB", "shrinkk")
     SECRET_KEY = os.getenv("SECRET_KEY") or os.getenv("JWT_SECRET_KEY") or "dev-insecure-change-me"
     # Optional canonical origin for short links; when unset, the domain the site was visited on is used.

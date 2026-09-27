@@ -23,6 +23,9 @@ def create_app(config_overrides=None, db=None):
     app.config.from_object(Config)
     app.config.update(config_overrides or {})
 
+    if app.config["PRODUCTION"]:
+        app.debug = False  # a stray FLASK_DEBUG env var must never enable debug mode in production
+
     if app.config["PRODUCTION"] and app.config["SECRET_KEY"] == "dev-insecure-change-me":
         raise RuntimeError("Set SECRET_KEY in the environment before running in production.")
 
