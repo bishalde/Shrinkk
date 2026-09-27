@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block body %}
+<!-- Nav -->
+<nav class="fixed top-0 w-full z-50 glass border-b border-surface-200/50">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
+        <a href="/" class="text-xl font-extrabold tracking-tight">⚡ Shrinkk</a>
+        <div class="hidden md:flex items-center gap-8 text-[13px] font-medium text-surface-500">
+            <a href="#features" class="hover:text-surface-900 transition">Features</a>
+            <a href="#how" class="hover:text-surface-900 transition">How It Works</a>
+            <a href="#stats" class="hover:text-surface-900 transition">Why Us</a>
+        </div>
+        <div class="flex items-center gap-2.5">
+            <a href="/login" class="px-5 py-2 text-[13px] font-semibold text-surface-700 hover:text-surface-900 transition">Login</a>
+            <a href="/signup" class="px-5 py-2 text-[13px] font-semibold text-white gradient-brand rounded-lg hover:shadow-glow transition btn-press">Get Started</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero - Dark immersive -->
+<section class="relative min-h-[92vh] flex items-center overflow-hidden" style="background:radial-gradient(ellipse 80% 60% at 50% 40%,#312e81 0%,#0f172a 70%,#020617 100%)">
+    <div class="absolute inset-0">
+        <div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-brand-500/15 rounded-full blur-[120px] animate-pulse-slow"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-violet-500/10 rounded-full blur-[100px] animate-pulse-slow" style="animation-delay:1.5s"></div>
+        <div class="absolute inset-0" style="background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:32px 32px"></div>
+    </div>
+    <div class="max-w-7xl mx-auto px-6 relative z-10 w-full py-32">
+        <div class="grid lg:grid-cols-12 gap-12 items-center">
+            <div class="lg:col-span-6 animate-fade-up">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-brand-300 text-xs font-semibold mb-8 backdrop-blur">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Now in public beta
+                </div>
+                <h1 class="text-5xl md:text-[4.25rem] leading-[1.05] font-extrabold tracking-tight text-white">
+                    Shorten Links.<br>
+                    <span class="text-transparent bg-clip-text" style="background:linear-gradient(135deg,#818cf8,#c084fc,#f472b6)">Track Everything.</span><br>
+                    Grow Faster.
+                </h1>
+                <p class="mt-7 text-lg text-surface-400 leading-relaxed max-w-md">
+                    The link management platform for modern teams. Custom URLs, real-time analytics, QR codes — all in one place.
+                </p>
+                <div class="flex flex-wrap gap-3 mt-9">
+                    <a href="/signup" class="group px-8 py-4 gradient-brand text-white rounded-xl font-semibold text-sm hover:shadow-glow-lg transition-all btn-press flex items-center gap-2">
+                        Start For Free <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                    <a href="#features" class="px-8 py-4 bg-white/5 text-white/80 rounded-xl font-semibold text-sm hover:bg-white/10 transition border border-white/10 btn-press backdrop-blur">
+                        See Features
+                    </a>
+                </div>
+                <div class="flex items-center gap-5 mt-12">
+                    <div class="flex -space-x-2">
+                        {% for c in ['brand','emerald','amber','rose','cyan'] %}
+                        <div class="w-8 h-8 rounded-full bg-{{c}}-400 border-2 border-surface-900 flex items-center justify-center text-[9px] font-bold text-white">{{ loop.index }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="border-l border-white/10 pl-5">
+                        <div class="flex gap-0.5 text-amber-400 text-[11px]">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                        <p class="text-[11px] text-surface-500 mt-0.5">Trusted by <strong class="text-white/70">500+</strong> users</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Hero right - floating dashboard mockup -->
+            <div class="lg:col-span-6 hidden lg:block animate-fade-in">
+                <div class="relative">
+                    <div class="absolute -inset-4 bg-brand-500/10 rounded-3xl blur-2xl"></div>
+                    <div class="relative bg-surface-900/80 backdrop-blur-xl rounded-2xl border border-white/10 p-5 shadow-2xl">
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="flex gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-red-500/70"></div><div class="w-2.5 h-2.5 rounded-full bg-amber-500/70"></div><div class="w-2.5 h-2.5 rounded-full bg-emerald-500/70"></div></div>
+                            <div class="flex-1 bg-white/5 rounded-md px-3 py-1 text-[10px] text-surface-500 font-mono">shrinkk.in/dashboard</div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 mb-4">
+                            <div class="bg-white/5 rounded-xl p-3 border border-white/5">
+                                <p class="text-[9px] text-surface-500 font-semibold uppercase">Links</p>
+                                <p class="text-xl font-extrabold text-white mt-0.5">142</p>
+                            </div>
+                            <div class="bg-brand-500/10 rounded-xl p-3 border border-brand-500/10">
+                                <p class="text-[9px] text-brand-400 font-semibold uppercase">Clicks</p>
+                                <p class="text-xl font-extrabold text-brand-300 mt-0.5">2,280</p>
+                            </div>
+                            <div class="bg-emerald-500/10 rounded-xl p-3 border border-emerald-500/10">
+                                <p class="text-[9px] text-emerald-400 font-semibold uppercase">Month</p>
+                                <p class="text-xl font-extrabold text-emerald-300 mt-0.5">1,756</p>
+                            </div>
+                        </div>
+                        <div class="flex items-end gap-1 h-20 mb-4 px-1">
+                            {% for h in [25,40,30,55,45,70,60,85,75,65,80,50,90,70] %}
+                            <div class="flex-1 rounded-t transition-all hover:opacity-80" style="height:{{h}}%;background:linear-gradient(to top,rgba(99,102,241,.3),rgba(99,102,241,.6))"></div>
+                            {% endfor %}
+                        </div>
+                        <div class="space-y-1.5">
+                            {% for code, url, clicks in [('mall','dribbble.com/MallKumator','856'),('notion','notion.so/workspace','421'),('figma','figma.com/design/abc','320')] %}
+                            <div class="flex items-center justify-between bg-white/5 rounded-lg px-3 py-2 border border-white/5">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded bg-brand-500/20 flex items-center justify-center"><i data-lucide="link" class="w-3 h-3 text-brand-400"></i></div>
+                                    <div><p class="text-[11px] font-semibold text-brand-400">shrinkk.in/{{code}}</p><p class="text-[9px] text-surface-500">{{url}}</p></div>
+                                </div>
+                                <span class="text-[10px] font-bold text-surface-400">{{clicks}}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bottom fade -->
+    <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
+</section>
+
+<!-- Shorten Now -->
+<section id="features" class="py-20 relative -mt-16 z-10">
+    <div class="max-w-3xl mx-auto text-center px-6">
+        <div class="bg-white rounded-3xl shadow-elevated border border-surface-100 p-8 md:p-10">
+            <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">Shorten Your Link Now</h2>
+            <p class="text-surface-400 mt-2 text-sm">Paste your long URL and get a short, trackable link instantly</p>
+            <form action="/api/links/create" method="POST" class="mt-6 flex gap-2 bg-surface-50 p-2 rounded-2xl border border-surface-100">
+                <div class="flex-1 relative">
+                    <i data-lucide="globe" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-300"></i>
+                    <input type="url" name="original_url" placeholder="https://example.com/your-very-long-url..." required class="w-full pl-10 pr-4 py-3.5 rounded-xl text-sm focus:outline-none placeholder-surface-300 bg-white border border-surface-100 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition">
+                </div>
+                <button type="submit" class="px-8 py-3.5 gradient-brand text-white rounded-xl font-semibold text-sm hover:shadow-glow transition-all whitespace-nowrap btn-press flex items-center gap-2">
+                    <i data-lucide="zap" class="w-4 h-4"></i> Shorten
+                </button>
+            </form>
+            <p class="text-[11px] text-surface-300 mt-4">Free forever &middot; No signup required &middot; <a href="/signup" class="text-brand-600 font-semibold hover:underline">Sign up</a> to track clicks</p>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="py-24">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 text-brand-600 text-xs font-semibold mb-4 border border-brand-100">
+                <i data-lucide="sparkles" class="w-3 h-3"></i> Features
+            </div>
+            <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">Everything You Need</h2>
+            <p class="text-surface-400 mt-3 max-w-md mx-auto">Powerful tools designed to help you manage links and grow your audience</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-5">
+            {% set features = [
+                ("link","Custom Short Links","Create branded short URLs with custom aliases that match your brand identity.","brand","bg-brand-50 border-brand-100","text-brand-500"),
+                ("bar-chart-3","Real-Time Analytics","Track clicks, devices, browsers, locations, and referrers in real time.","emerald","bg-emerald-50 border-emerald-100","text-emerald-500"),
+                ("qr-code","QR Code Generator","Auto-generated QR codes for every link. Download as PNG instantly.","violet","bg-violet-50 border-violet-100","text-violet-500"),
+                ("clock","Link Expiration","Set time-based expiration for campaigns. Auto-disable when expired.","amber","bg-amber-50 border-amber-100","text-amber-500"),
+                ("shield-check","Secure &amp; Reliable","HTTPS encryption, rate limiting, and 99.9% uptime guaranteed.","rose","bg-rose-50 border-rose-100","text-rose-500"),
+                ("zap","Instant Redirect","Lightning-fast 302 redirects. Your audience never waits.","cyan","bg-cyan-50 border-cyan-100","text-cyan-500")
+            ] %}
+            {% for icon, title, desc, color, bg, tc in features %}
+            <div class="bg-white rounded-2xl p-6 shadow-card border border-surface-100 hover-lift group cursor-default">
+                <div class="w-12 h-12 rounded-xl {{bg}} border flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <i data-lucide="{{icon}}" class="w-5 h-5 {{tc}}"></i>
+                </div>
+                <h3 class="text-[15px] font-bold text-surface-900">{{title}}</h3>
+                <p class="text-[13px] text-surface-400 mt-2 leading-relaxed">{{desc}}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- How it works -->
+<section id="how" class="py-24 bg-surface-950 relative overflow-hidden">
+    <div class="absolute inset-0" style="background-image:radial-gradient(rgba(255,255,255,.02) 1px,transparent 1px);background-size:24px 24px"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-600/5 rounded-full blur-3xl"></div>
+    <div class="max-w-7xl mx-auto px-6 relative">
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-brand-300 text-xs font-semibold mb-4">
+                <i data-lucide="workflow" class="w-3 h-3"></i> Workflow
+            </div>
+            <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-white">How It Works</h2>
+            <p class="text-surface-400 mt-3">Five simple steps from URL to insights</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {% set steps = [("1","Paste Link","link"),("2","Shorten","scissors"),("3","Customize","edit-3"),("4","QR Code","qr-code"),("5","Track","bar-chart-3")] %}
+            {% for num, label, icon in steps %}
+            <div class="relative group">
+                <div class="{% if loop.first %}gradient-brand{% else %}bg-white/5 border border-white/10{% endif %} rounded-2xl p-6 text-center hover-lift backdrop-blur {% if not loop.first %}hover:bg-white/10{% endif %} transition">
+                    <div class="{% if loop.first %}bg-white/20{% else %}bg-white/5{% endif %} w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <i data-lucide="{{icon}}" class="w-5 h-5 {% if loop.first %}text-white{% else %}text-brand-400{% endif %}"></i>
+                    </div>
+                    <div class="{% if loop.first %}text-white/50{% else %}text-surface-600{% endif %} text-[10px] font-bold uppercase tracking-widest mb-1">Step {{num}}</div>
+                    <p class="text-sm font-semibold {% if loop.first %}text-white{% else %}text-surface-300{% endif %}">{{label}}</p>
+                </div>
+                {% if not loop.last %}
+                <div class="hidden md:block absolute top-1/2 -right-3 text-surface-700"><i data-lucide="chevron-right" class="w-4 h-4"></i></div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Stats -->
+<section id="stats" class="py-24">
+    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+        <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 text-brand-600 text-xs font-semibold mb-4 border border-brand-100">
+                <i data-lucide="trending-up" class="w-3 h-3"></i> By the numbers
+            </div>
+            <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">Why Use Our Service</h2>
+            <p class="text-surface-400 mt-3 max-w-lg">Our platform was built to help you make every point of connection between your content and your audience ignite action.</p>
+            <div class="grid grid-cols-2 gap-4 mt-10">
+                {% set stats = [("100k","Active Users","users","brand"),("50k","Links / Month","link","emerald"),("500+","Integrations","puzzle","amber"),("99%","Uptime","server","rose")] %}
+                {% for val, label, icon, color in stats %}
+                <div class="bg-white rounded-2xl p-5 shadow-card border border-surface-100 hover-lift">
+                    <div class="w-10 h-10 rounded-xl bg-{{color}}-50 border border-{{color}}-100 flex items-center justify-center mb-3"><i data-lucide="{{icon}}" class="w-4 h-4 text-{{color}}-500"></i></div>
+                    <p class="text-2xl font-extrabold">{{val}}</p>
+                    <p class="text-xs text-surface-400 mt-0.5">{{label}}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="gradient-brand rounded-3xl p-10 text-white relative overflow-hidden shadow-glow-lg">
+            <div class="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-12 -mt-12 blur-2xl"></div>
+            <div class="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full -ml-8 -mb-8 blur-xl"></div>
+            <div class="relative">
+                <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mb-5 backdrop-blur"><i data-lucide="shield-check" class="w-7 h-7 text-white"></i></div>
+                <p class="text-lg font-semibold opacity-90">SSL and redirection</p>
+                <p class="text-4xl font-extrabold mt-2 leading-tight">URL with<br>no worries</p>
+                <p class="mt-5 text-sm opacity-70 leading-relaxed">Every link is secured with HTTPS encryption. Your audience can click with confidence, every time.</p>
+                <div class="mt-8 flex gap-6">
+                    <div class="bg-white/10 rounded-xl px-4 py-3 backdrop-blur"><p class="text-xl font-extrabold">256-bit</p><p class="text-[10px] opacity-60 mt-0.5">Encryption</p></div>
+                    <div class="bg-white/10 rounded-xl px-4 py-3 backdrop-blur"><p class="text-xl font-extrabold">&lt;50ms</p><p class="text-[10px] opacity-60 mt-0.5">Redirect Speed</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="relative overflow-hidden" style="background:radial-gradient(ellipse 80% 80% at 50% 100%,#312e81 0%,#0f172a 60%,#020617 100%)">
+    <div class="absolute inset-0" style="background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:32px 32px"></div>
+    <div class="max-w-7xl mx-auto px-6 py-28 relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+        <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-brand-300 text-xs font-semibold mb-6">
+                <i data-lucide="flame" class="w-3 h-3"></i> Growth Hack your way to the Top!
+            </div>
+            <h2 class="text-4xl md:text-5xl font-extrabold text-white leading-tight">Get Closer To Your<br>Customers Today</h2>
+            <p class="text-surface-400 mt-5 max-w-md text-[15px]">Start shortening links, tracking performance, and growing your brand in minutes. Free to start.</p>
+            <div class="flex flex-wrap gap-4 mt-9">
+                <a href="/signup" class="group px-8 py-4 gradient-brand text-white rounded-xl font-semibold text-sm hover:shadow-glow-lg transition-all btn-press flex items-center gap-2">
+                    Get Started For Free <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+        </div>
+        <div class="hidden lg:block">
+            <div class="bg-white/5 backdrop-blur rounded-2xl p-8 border border-white/10">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="flex gap-6">
+                        <div><p class="text-[10px] text-surface-500 uppercase font-semibold tracking-wider">Total Clicks</p><p class="text-3xl font-extrabold text-white mt-1">2,280</p></div>
+                        <div><p class="text-[10px] text-surface-500 uppercase font-semibold tracking-wider">Email, SMS, Direct</p><p class="text-3xl font-extrabold text-brand-400 mt-1">1,756</p></div>
+                    </div>
+                </div>
+                <div class="flex items-end gap-1.5 h-28">
+                    {% for h in [25,40,30,55,45,70,60,85,75,65,80,50,90,70,55] %}
+                    <div class="flex-1 rounded-t-md hover:opacity-80 transition" style="height:{{h}}%;background:linear-gradient(to top,rgba(99,102,241,.2),rgba(99,102,241,.5))"></div>
+                    {% endfor %}
+                </div>
+                <div class="mt-4 flex justify-between text-[9px] text-surface-600 font-medium">
+                    <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-surface-950 text-white py-16 border-t border-surface-800">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-4 gap-10 mb-12">
+            <div>
+                <p class="text-lg font-extrabold">⚡ Shrinkk</p>
+                <p class="text-sm text-surface-400 mt-3 leading-relaxed">Smart link management platform with analytics, tracking, and automation.</p>
+                <div class="flex gap-3 mt-5">
+                    {% for icon in ['twitter','github','linkedin'] %}
+                    <a href="#" class="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition"><i data-lucide="{{icon}}" class="w-4 h-4 text-surface-400"></i></a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-surface-500 mb-4">Menu</p>
+                <div class="flex flex-col gap-2.5 text-sm text-surface-400">
+                    <a href="/" class="hover:text-white transition">Home</a>
+                    <a href="#features" class="hover:text-white transition">Features</a>
+                    <a href="#how" class="hover:text-white transition">How It Works</a>
+                </div>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-surface-500 mb-4">Services</p>
+                <div class="flex flex-col gap-2.5 text-sm text-surface-400">
+                    <a href="/signup" class="hover:text-white transition">Link Shortener</a>
+                    <a href="/signup" class="hover:text-white transition">QR Codes</a>
+                    <a href="/signup" class="hover:text-white transition">Analytics</a>
+                </div>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-surface-500 mb-4">Newsletter</p>
+                <p class="text-xs text-surface-500 mb-3">Get the latest updates and tips.</p>
+                <div class="flex gap-2">
+                    <input type="email" placeholder="your@email.com" class="flex-1 px-4 py-2.5 text-sm bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-brand-500 text-white placeholder-surface-500 backdrop-blur">
+                    <button class="px-4 py-2.5 gradient-brand text-white text-sm rounded-lg font-semibold btn-press hover:shadow-glow transition">Join</button>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-surface-800 pt-8 text-xs text-surface-500 flex flex-col md:flex-row justify-between gap-4">
+            <p>&copy; 2026 Shrinkk. All Rights Reserved.</p>
+            <div class="flex gap-6"><a href="#" class="hover:text-surface-300 transition">Terms</a><a href="#" class="hover:text-surface-300 transition">Privacy</a></div>
+        </div>
+    </div>
+</footer>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Log In{% endblock %}
+
+{% block body %}
+<div class="min-h-screen flex">
+    <div class="hidden lg:flex lg:w-1/2 gradient-dark items-center justify-center p-16 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-brand-600/20 rounded-full -mr-48 -mt-48 blur-3xl"></div>
+        <div class="relative text-white max-w-md">
+            <p class="text-2xl font-extrabold mb-6">⚡ Shrinkk</p>
+            <h2 class="text-3xl font-extrabold leading-tight">Welcome back!<br>Your links are waiting.</h2>
+            <p class="mt-4 text-surface-400 leading-relaxed">Log in to manage your links, view analytics, and download QR codes.</p>
+        </div>
+    </div>
+    <div class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
+        <div class="w-full max-w-sm animate-fade-up">
+            <a href="/" class="lg:hidden text-xl font-extrabold mb-8 inline-block">⚡ Shrinkk</a>
+            <h2 class="text-2xl font-extrabold text-surface-900">Welcome back</h2>
+            <p class="text-surface-400 mt-2 text-sm">Log in to your account to continue.</p>
+            {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}
+            <div class="mt-4 px-4 py-3 rounded-xl text-sm font-medium {% if category == 'error' %}bg-red-50 text-red-600 border border-red-100{% else %}bg-emerald-50 text-emerald-600 border border-emerald-100{% endif %}">{{ message }}</div>
+            {% endfor %}{% endif %}{% endwith %}
+            <form action="/api/auth/login" method="POST" class="mt-8 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-surface-500 mb-1.5">Email address</label>
+                    <div class="relative">
+                        <i data-lucide="mail" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-300"></i>
+                        <input type="email" name="email" required placeholder="you@example.com" class="w-full pl-10 pr-4 py-3 border border-surface-200 rounded-xl text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition placeholder-surface-300">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-surface-500 mb-1.5">Password</label>
+                    <div class="relative">
+                        <i data-lucide="lock" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-300"></i>
+                        <input type="password" name="password" id="pw" required placeholder="Enter your password" class="w-full pl-10 pr-10 py-3 border border-surface-200 rounded-xl text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition placeholder-surface-300">
+                        <button type="button" onclick="togglePw()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-surface-300 hover:text-surface-500"><i data-lucide="eye" id="pw-icon" class="w-4 h-4"></i></button>
+                    </div>
+                </div>
+                <button type="submit" class="w-full py-3 gradient-brand text-white rounded-xl font-semibold text-sm hover:shadow-glow transition-all btn-press mt-2">Log In</button>
+            </form>
+            <p class="text-center text-sm text-surface-400 mt-8">Don't have an account? <a href="/signup" class="text-brand-600 font-semibold hover:underline">Sign up</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function togglePw(){const p=document.getElementById('pw'),i=document.getElementById('pw-icon');if(p.type==='password'){p.type='text';i.setAttribute('data-lucide','eye-off')}else{p.type='password';i.setAttribute('data-lucide','eye')}lucide.createIcons()}
+</script>
+{% endblock %}

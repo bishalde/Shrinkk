@@ -1,0 +1,14 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.DS_Store
+*.log
+.claude/settings.local.json
+node_modules/
+.pytest_cache/
