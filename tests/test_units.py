@@ -67,7 +67,7 @@ def test_lockfile_only_uses_public_npm_registry():
 
 
 def test_vercel_excludes_never_drop_app_code():
-    """Vercel matches excludeFiles globs at any depth: "public/**" once removed templates/public/profile.html."""
+    """Bio pages 500ed on Vercel because templates/public/profile.html was left out of the function bundle."""
     import json
     import re
     from pathlib import Path
@@ -77,6 +77,7 @@ def test_vercel_excludes_never_drop_app_code():
     dirs = re.fullmatch(r"\{(.+)\}/\*\*", pattern).group(1).split(",")
     app_files = [f.relative_to(root).as_posix() for top in ("templates", "routes", "services", "models", "utils", "api")
                  for f in (root / top).rglob("*") if f.is_file()]
-    for d in dirs:
+    # Vercel also strips any "public" folder (the static output name) from the bundle, whatever excludeFiles says.
+    for d in dirs + ["public"]:
         hits = [f for f in app_files if f"/{d}/" in f"/{f}"]
         assert not hits, f"excludeFiles '{d}/**' would drop {hits}"

@@ -43,7 +43,7 @@ def profile(username):
         repos().events.log_profile_view(uid, info)
 
     return render_template(
-        "public/profile.html",
+        "bio/profile.html",
         profile=user,
         links=repos().links.profile_links(uid, public=True),
         socials=socials.for_display(user.get("socials")),
